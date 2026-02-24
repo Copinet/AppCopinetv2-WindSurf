@@ -1,0 +1,2287 @@
+=== PÁGINA 1 ===
+PROMPT DE INSTRUÇÃO PARA  AGENTE  NÃO SE PERDER NO CONTESTO.  
+“Sua janela de contexto será compactada automaticamente à medida que se aproxima do 
+limite, permitindo que você continue trabalhando indefinidamente de onde parou. Portanto, 
+não interrompa tarefas prematuramente devido a p reocupações com o orçamento de tokens. 
+Conforme você se aproxima do limite do seu orçamento de tokens, salve seu progresso e 
+estado atuais na memória antes que a janela de contexto seja atualizada. Seja sempre o mais 
+persistente e autônomo possível e concl ua as tarefas totalmente, mesmo que o fim do seu 
+orçamento esteja se aproximando. Nunca interrompa nenhuma tarefa artificialmente.… ” 
+INSTRUÇÕES E DIRETRIZES ANTES DE COMEÇAR A CONSTRUIR:  
+“Ao analisar, estudar e planejar a execução  deste proje to, você tem autonomia para 
+em caso de instruções conflitantes , fluxo mal resolvido, instruções dúbias para o 
+mesmo objetivo, de decidir qual a melhor se aplica caso a caso, tem autonomia 
+também para melhorar fluxos funções, sequencia, que julgue através d e sua 
+experiência em programação e desenvolvimento ser obsoleta e de ter opções 
+melhores e mais eficientes. Essas decisões e mudanças só não será permitida quando 
+ao aplica -las mude a ideia central e conceito do aplicativo. ” 
+ 
+PROMPTS  PRINCIPAL DO PROJETO:  
+ PRONTOS PARA O APP COPINET SERVIÇO S DIGITAIS.  
+Crie um aplicati vo nativo completo para Android, iOS e web  chamado "Copinet 
+Serviços Digitais", voltado para pessoas idosas e  leigas em tecnologia, por isso deve d e 
+fácil acesso aos serviços e intuitivo, sem deixar de ser uma inovação e uma central de 
+emissão de documentos e serviços gráficos. (início em Cubatão com 2 lojas próprias) e 
+aberto para que parceiros se cadastre para prestar serviços pela plataforma aos cl ientes 
+que procuram esses serviços.  
+O objetivo principal é ser a plataforma mais acessível e conveniente para serviços 
+burocráticos, digitais e de copiadora na região: confiança,  assistência humana e 
+impressão física. Para emissões em sites externos (ex: c ertidões, documentos oficiais), 
+utilize opção única "Fazemos pra você " via parceiros do marketplace  e opção "Cliente 
+Faz Sozinho" (Serviços Internos, como Currículos, Contratos, Trabalhos Escolares, Foto 
+3x4, Escaneamento PDF):  
+ 
+Estrutura geral:  
+ Design sim ples, mod erno e intuitivo, com cores Prata e Dourado (acessível para 
+todas as idades).  
+ Navegação bottom tab: Home, Serviços, Pedidos, Perfil.  
+ Mapa integrado para localização de lojas próprias e parceiros.  
+ Pagamento exclusivo via Pix (Mercado Pago ou simila r). 
+ Notificações push para status de pedidos.  
+ Chat de suporte rápido.  
+
+=== PÁGINA 2 ===
+ Permita que o usuário tire foto do RG, CNH com a câmera, use OCR para 
+extrair nome, CPF, RG,  data de nascimento e filiação para facilitar a extração de 
+informações que serão necessárias em determinados serviços.  
+ 
+Fluxo Específico para "Fazemos pra Você" (Serviços em Sites Externos, como 
+Certidões, Inscrições, MEI, etc.)  – Aplicar a Todos os serviços que for a opção 
+“Fazemos pra você”  
+ Colete dados necessários para o serviço (ex: CPF, RG, d ata nascimento, 
+edital/link para inscrições).  
+ Escolha 'Só PDF' ou 'PDF + Impressão'.  
+ Se cliente escolher opção com impressão app deve verificar (escondido sem 
+cliente perceber ou saber) se naquele momento (pode ser fora de horário ou final 
+de semana) exist e algum  parceiro (que tenha marcado a opção que faz 
+impressão ou seja parceiros impressores  no seu cadastro) , disponível ou online, 
+isso evita cobrar impressão depois da emissão do documento e ter que devolver 
+o valor pago por falta de parceiro impressor.  Caso não tenha disponível Avisar 
+“Impressão não disponível no momento”. Se for possível desabilitar serviço de 
+impressão para clientes que o app por geolocalização não detectar parceiros 
+próximos caso ele queira impressão.  
+ Vá para tela de pagamento com re sumo (preço para só pdf ou preço para pdf + 
+impressão ). 
+ Após pagamento Pix confirmado, crie pedido e direcione para parceiros 
+cadastrados naquele serviço.  
+ Parceiro aceita via dashboard, emite no site oficial e faz upload do 
+PDF/comprovante no app.  
+ Notifiqu e client e: 'PDF pronto! Disponível por 3  dias para baixar ou 
+compartilhar'.  
+ Se impressão escolhida: mostre mapa de parceiros com impressora  próximos  
+(raio de 5 a 15 km – Use geolocalização) ; cliente seleciona um e aguarda 
+parceiro que ele escolheu confirma r que vai imprimir.  Mostre ao cliente tela de 
+espera: 'Aguardando aceite da impressão... Tempo estimado: 5 - min. Você será 
+notificado quando aceito.'  
+ Se parceiro recusa ou timeout (5 min): Atualize mapa agora sem a opção do 
+parceiro que recusou ou não resp ondeu em até 5 min. E Mostre novamente ao 
+cliente para que escolha outro parceiro, “desculpe pelo inconveniente, escolha 
+outro parceiro para retirar sua impressão” reenviar para o parceiro selecionado.  
+ (Se nenhum da lista de disponível no raio de 5 a 15 km  responder, notificar 
+cliente que impressão não está disponível no momento. Ofereça só pdf emitido e 
+devolução automática do valor da impressão pago).  
+ Se impressão aceita - Gere QR code automático com: número do pedido, horário 
+estimado de pronto (consider ando fila de espera do parceiro), nome/endereço do 
+parceiro.  
+ Final do fluxo: tela de sucesso com PDF liberado, QR code (se impressão) e 
+botão 'Baixar/Compartilhar PDF'.  
+
+=== PÁGINA 3 ===
+ Registre aceitações/recusas no ranking do parceiro (penalize recusa frequente).  
+ Obs: se  no momento de escolher parceiro não tiver parceiro online (Ex: finais de 
+semana, fora do horário de funcionamento, etc), mostra na opção de escolher 
+aviso “Impressão indisponível no mento, Nenhum parceiro disponível”  
+ 
+Fluxo Específico para "Cliente Faz So zinho" (Serviços Internos, como Currículos, 
+Contratos, Trabalhos Escolares)  - Aplicar a Todos os serviços que for a opção 
+“Cliente Faz Sozinho”  
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base , se possível mostre preço normal e  preço com desconto.  
+ Colete dados necessários para o serviço (ex: experiências para currículo  e todos 
+os dados necessários , contratos imobili ario e seus dados, etc ). 
+ Escolh a 'Só PDF' ou 'PDF + Impressão.  
+• Se cliente escolher opção com impressão app deve verificar (escondido 
+sem cliente perceber ou saber) se naquele momento (pode ser fora de horário ou 
+final de semana) existe algum  parceiro (que tenha marcado a opção que faz 
+impressão ou seja parceiros impressores no seu cadastro), disponível ou online, 
+isso evita cobrar impressão depois da emissão do documento e ter que devolver 
+o valor pago por falta de parceiro impressor. Caso não tenha disponível Avisar 
+“Impressão não disponível no momento”. Se for possível desabilitar serviço de 
+impressão para clientes que o app por geolocalização não detectar parceiros 
+próximos caso ele queira impressão.  
+ Vá para tela de pagamento com resumo (preço para só pdf ou preço para  pdf + 
+impressão).  
+ Após pagamento Pix confirmado, gere PDF imediatamente no app.  
+ Notifique: 'PDF pronto! Disponível por 3 dias para baixar ou compartilhar'.  
+ Se impressão escolhida: mostre mapa de parceiros com impressora  
+próximos (raio de 5 a 15 km – Use ge olocalização) ; cliente seleciona um  e 
+aguarda parceiro que ele escolheu confirmar que vai imprimir.  Mostre ao cliente 
+tela de espera: 'Aguardando aceite da impressão... Tempo estimado: 5 - min. 
+Você será notificado quando aceito.'  
+ Se parceiro recusa ou time out (5 min): Atualize mapa agora sem a opção do 
+parceiro que recusou ou não respondeu em até 5 min. E Mostre novamente ao 
+cliente para que escolha outro parceiro, “desculpe pelo inconveniente, escolha 
+outro parceiro para retirar sua impressão” reenviar par a o parceiro selecionado.  
+ (Se nenhum da lista de disponível no raio de 5 a 15 km responder, notificar 
+cliente que impressão não está disponível no momento. Ofereça só pdf emitido e 
+devolução automática do valor da impressão pago).  
+ Se impressão aceita - Gere QR code automático com: número do pedido, horário 
+estimado de pronto (considerando fila), nome/endereço do parceiro.  
+ Final do fluxo: tela de sucesso com PDF liberado, QR code (se impressão) e 
+botão 'Baixar/Compartilhar PDF'.  
+
+=== PÁGINA 4 ===
+ Registre aceitações/recusas n o ranking do parceiro (penalize recusa frequente).  
+ Obs: se no momento de escolher parceiro não tiver parceiro online (Ex: finais de 
+semana, fora do horário de funcionamento, etc), mostra na opção de escolher 
+aviso “Impressão indisponível no mento, nenhum p arceiro disponível”  
+ 
+Implemente esse padrão em todas as telas de serviços, garantindo integração com 
+marketplace de parceiros para impressão (direcionamento automático se parceiro 
+emissor não tiver impressora). Use Supabase para rastrear pedidos, tempos de  
+disponibilidade e QR codes. Inclua banner ético em serviços de inscrição: 'Fazemos 
+com seus dados, mas responsabilidade legal é do usuário'.  
+2º parte  
+Criação de Pedido para Parceiro e Direcionamento  
+"Após pagamento da opção ' "Fazemos pra Você" : 
+ Crie pedid o no backend com dados do cliente (CPF/RG/data etc., já validados)  
+ Notifique parceiros cadastrados para aquele serviço específico (baseado no 
+questionário de cadastro)  
+ Priorize parceiros online/rápidos  
+ Se cliente quer só PDF: aceita qualquer parceiro (mesm o sem impressora)  envie 
+broadcast para 5 -10 parceiros disponíveis/melhor avaliados (ranking >70, 
+online).  
+ Se quer PDF + impressão: priorize parceiros com impressora ou combine 
+(emissor remoto + impressor próximo) envie broadcast para 5 -10 parceiros 
+próximo s (raio 5 -15 km do cliente) + priorize ranking . Mostre ao cliente: 
+'Pedido enviado! Tempo estimado: (de acordo com fila do parceiro escolhido 
+para impressão). No caso de só pdf mostre “Você receberá o PDF no app'."  
+Dashboard do Parceiro para Aceitar Pedido s de Emissão  
+"No dashboard do parceiro (tela exclusiva para role 'Parceiro'):  
+Liste pedidos pen dentes direcionados a ele, Notifique parceiros via push/chat: 'Novo 
+pedido! [Tipo serviço, preço comissão R$XX].Aceite em 5 min ou perde para outro.'  
+ 
+Painel do parceiro ter a opção de se imprime e emite não aceitar impressão 
+temporariamente (pode estar com problema na impressora).  
+ Botão 'Aceitar Pedido' → abre tela com dados completos do cliente + botão 
+'Abrir Site Oficial' (Linking.openURL para URL do serviço)  
+ Após emitir e baixar PDF: botão 'Upload PDF Gerado' (upload do arquivo)  
+ Sistema verifica upload → libera PDF para cliente auto maticamente.   
+ 
+
+=== PÁGINA 5 ===
+Se cliente pediu impressão: ofereça opção 'Enviar para impressão em parceiro 
+próximo' ou 'Imprimir eu mesmo' (se par ceiro tem impressora)"  
+ 
+ 
+Criação do Pedido Combinado  
+"Ao confirmar pagamento da opção com impressão:  
+ Crie pedido único com duas partes:  
+1. Emissão do documento (direciona para parceiros cadastrados no serviço, 
+mesmo sem impressora)  
+2. Impressão física (direciona  para parceiro com impressora selecionado 
+pelo cliente ou mais próximo) Mostre ao cliente: 'Pedido combinado 
+enviado! Um parceiro emitirá o PDF e outro imprimirá. Tempo 
+estimado: (De acordo com fila de parceiro se houver) '." 
+Dashboard do Parceiro com Pedid os Combinados  
+"No dashboard do parceiro:  
+ Separe pedidos em abas: 'Emissão de Documentos' e 'Impressão'  
+ Para emissão: mostre dados do cliente + botão 'Abrir Site Oficial' + upload PDF  
+ Para impressão: mostre PDF já emitido (de outro parceiro) + detalhes do c liente 
++ opções de papel + botão 'Confirmar Impresso e Pronto para Retirada'  
+ Comissão automática: parceiro emissor 40%, parceiro impressor 30%, app 30%"  
+Notificação e Entrega ao Cliente  
+"Após parceiro emissor fazer upload do PDF:  
+ Libere PDF imediatamente n o app do cliente  
+ Notifique: 'PDF pronto! Agora aguardando impressão' Após parceiro impressor 
+confirmar:  
+ Notifique cliente: 'Impresso e pronto! Retire em [nome/loja do parceiro] ou 
+entrega agendada'  
+ Mostre mapa com localização exata e código de retirada"  
+Fallback Automático  
+"Se não houver parceiro com impressora próximo ou disponível:  
+ Não Ofereça a opção de impressão e não cobre por isso: Aviso “Sem opção de 
+impressão no momento, você  receber só o PDF” Opção de aceitar ou recusar.  
+"Na tela de pagamento do pe dido combinado: Mostre resumo claro:  
+Exemplo:  
+
+=== PÁGINA 6 ===
+ Emissão por parceiro: R$30  
+ Impressão física (parceiro [nome]): R$25  
+ Total: R$55 Botão 'Confirmar Pedido Combinado'"  
+Tela Inicial de Cadastro de Parceiro  
+"Crie tela 'Torne -se Parceiro' acessível no menu Perfil. Texto: 'Ganhe dinheiro extra 
+emitindo documentos ou imprimindo pedidos  (Comissão de 60 -70% por pedido ). 
+Responda o questionário abaixo'. Botão 'Iniciar Questionário'."  
+Questionário Passo a Passo – Serviços de Emissão  
+"Crie fluxo de questionário multi -passo : Passo 1 – 'Quais documentos você sabe emitir 
+online?' Checkboxes múltiplos:  
+ Antecedentes Criminais  
+ Antecedentes Criminais Federal  
+ Certidão de Quitação Eleitoral  
+ Certidão de Crimes Eleitorais  
+ Impressão 2º Via do Titulo  
+ Certidão de Ação Criminal  
+ Certidão d e Distribuição Cível em Geral – SAJ SGC  
+ Certidão de distribuição de ações criminais  
+ Situação Cadastral CPF  
+ Certidão negativa de debito  
+ Emissão de Boleto IPTU  
+ Emissão Certidão Negativa Debito (Imóvel)  
+ Emissão de DARF  
+ Imposto de Renda Pessoa Física (CPF)  
+ CRL V-e (Detran)  
+ Débitos Veículo Detran  
+ Certidão de Pontos Na CNH (Detran)  
+ Certidão de Prontuário CNH (Detran)  
+ Extrato de Pagamento de Benefício (INSS)  
+ Requerer Benefício (INSS)  
+ Simular Aposentadoria (INSS)  
+ Consulta de Situação de Benefício (INSS)  
+ Requerer Apo sentadoria (INSS)  
+ Requerer Pensão por Morte (INSS)  
+ Requerer Auxílio -Doença (INSS)  
+ Prorrogação de Beneficio (INSS)  
+ Extrato de Pagamento de Beneficio (INSS)  
+ Extrato CNIS (INSS)  
+ Cumprir Exigência (INSS)  
+ 
+ Contratos de Trabalho (CTPS)  
+ Entrada em Seguro Desempre go (CTPS)  
+ Agendamento (Poupa Tempo)  
+
+=== PÁGINA 7 ===
+ 
+ Segunda via contas (Consumo, Sabesp, CPFL etc.)  
+ Emitir DAS mensal  
+ Declaração Anual DASN -SIMEI  
+ NFS-e (Só para Serviços)  
+ Comprovante CCMEI.  
+ Criar Currículo Novo  
+ Atualizar Currículo  
+ Envio de Curriculo Salvo no app ou no di spositivo do cliente pelo app, por 
+Email, ou por Whatsapp  
+ Curriculo com importação e interação com  LinkedIn Geração/baixa do PDF 
+final (com dados importados)  
+ Contrato de Locação de Imóvel (Aluguel)  
+ Contrato de Compra e Venda de Imóvel  
+ Recibo de Pagamento de Aluguel  
+ Autorização para Vistoria  
+ Atualizar Meu Contrato  
+ 
+ Contrato de Prestação de Serviço Geral (autônomo)  
+ Contrato para Diarista / Faxineira  
+ Contrato para Reforma / Pedreiro / Pintor  
+ Contrato para Mecânico / Oficina  
+ Recibo de Pagamento de Serviço  
+ 
+ Geral/Simples ('Novo Orçamento)  
+ Reforma e Construção ('Novo Orçamento)  
+ Manutenção e Reparos ('Novo Orçamento)  
+ Limpeza e Diarista (Novo Orçamento)  
+ Eventos e Buffet (Novo Orçamento)  
+ Freelancer/TI/Consultoria (Novo Orçamento)  
+ 
+ Declaração de Residência  
+ Declaração  de União Estável  
+ Declaração de Hipossuficiência (para gratuidade justiça)  
+ Autorização para Menor Viajar  
+ 
+ Trabalho Escolar  
+ Nível Educação Infantil / Fundamental  
+ Nível Médio  
+ Nível Universitário  
+ TCC  
+ 
+ 
+ Inscrições  
+ Concurso Público  
+ Sites de Emprego  
+ Cursos e Vestibulinho  
+
+=== PÁGINA 8 ===
+ Outros (nos conte o que precisa)  
+ 
+ Serviços Customizados / Tela Livre  
+ Outros documentos gov.br (especificar em campo texto) Botão 'Próximo'."  
+Questionário – Capacidade de Impressão  
+"Passo 2 – 'Você tem impressora para realizar impressões?' Radi o buttons:  
+ Não, só emissão de PDF  
+ Sim, preto e branco  
+ Sim, colorida  
+ Sim com Scanner  
+ Sim sem Scanner  
+ Sim, colorida + papel fotográfico (3x4, etc.) Se 'Sim': campo adicional 'Quantos 
+pedidos por dia consigo imprimir? (ex: 20)'."  
+ Impressora para fotos Jato de  Tinta  
+ Impressora para fotos Térmica  
+ Impressão Papel fotográfico Tamanho 10x15  
+ Impressão Papel fotográfico Tamanho 13x18  
+ Impressão Papel fotográfico Tamanho 15x21  
+ Impressão Papel fotográfico Tamanho 21x29 (A4)  
+ 
+ Foto 3x4 (6 fotos)  Folha sem corte  
+ 
+ Foto 3x4 (6 fotos)  Fotos já cortadas e separadas.  
+ 
+Questionário – Outros Serviços e Disponibilidade  
+"Passo 3 – 'Outros serviços que oferece' Checkboxes:  
+ Ajuda presencial / digitação de dados  
+ Campo 'Horários disponíveis' (multi -select: Manhã, Tarde, Noite, Finais de  
+semana)  
+ Quero receber Pedidos apenas quando estiver online (ter botão para indicar que 
+parceiro está online caso opte por essa alternativa de disponibilidade)  
+ Campo 'Raio de atendimento' (slider 5 a 50 km ou 'Todo Brasil para PDF')."  
+ Checkbox obrigatório : 
+   - "Aceito receber pedidos estando online e no meu horário disponível, podendo 
+recusar manualmente se não puder atender (não aceitação automática gera 
+penalidade no ranking)"  
+ - Checkbox obrigatório:  
+   - "Entendo que recusar muitos pedidos pode reduzir m eu ranking e diminuir 
+número de solicitações futuras"  
+
+=== PÁGINA 9 ===
+ 
+ 
+Prompt 5: Finalização do Cadastro  
+"Passo final – Resumo das respostas com botão 'Confirmar Cadastro'. Após enviar:  
+ Salve no Supabase com role 'Parceiro' e campos do questionário  
+ Mostre mensagem: 'Cada stro concluído! Você receberá pedidos compatíveis 
+com seus serviços. Comissão de 60 -70% por pedido.'  
+ Notificação push quando novo pedido chegar."  
+ 
+Edição do Perfil de Parceiro  
+"No menu Perfil do parceiro, adicione botão 'Editar Meus Serviços'. Reabra o 
+questionário completo para alterações a qualquer momento."  
+Dashboard com Filtros Baseados no Questionário  
+"No dashboard do parceiro, filtre pedidos pendentes apenas pelos serviços que ele 
+marcou no questionário (ex: só mostra Antecedentes se ele selecionou)."  
+Status Pendente no Cadastro  
+"Ao finalizar o questionário de cadastro de parceiro:  
+ Salve no Supabase com status 'Pendente Aprovação'  
+ Mostre mensagem ao parceiro: 'Cadastro recebido! Analisaremos em até 48h e 
+enviaremos notificação quando aprovado.'  
+ Não lib ere dashboard completo até aprovação."  
+Dashboard Admin para Aprovação  
+"Crie tela exclusiva 'Admin - Apro vação de Parceiros' (role admin ). Liste parceiros 
+pendentes com:  
+ Nome, telefone, e -mail, cpf/cnpj, Endereço  
+ Serviços selecionados no questionário (lista ) 
+ Tem impressora? (detalhes)  
+ Data do cadastro Botões por linha:  
+ 'Aprovar' (muda status para 'Aprovado', envia notificação push/e -mail)  
+ 'Rejeitar' (muda status 'Rejeitado', envia motivo opcional)  
+ 'Ver Detalhes' (mostra questionário completo)"  
+Notificação de  Aprovação/Rejeição  
+
+=== PÁGINA 10 ===
+"Ao aprovar:  
+ Mude status para 'Aprovado'  
+ Envie notificação push: 'Parabéns! Seu cadastro foi aprovado. Agora você 
+recebe pedidos.'  
+ Libere dashboard completo com pedidos pendentes  
+Ao rejeitar:  
+ Campo texto obrigatório 'Motivo da rejeição'  (ex: 'Falta experiência nos 
+serviços')  
+ Envie notificação: 'Cadastro rejeitado: [motivo]. Pode tentar novamente editando 
+seu perfil.'"  
+Edição para Reaplicação  
+"Se status 'Rejeitado', permita ao parceiro 'Editar Questionário' novamente. Ao reenviar: 
+mude st atus de volta para 'Pendente' e notifique admin."  
+Filtro no Direcionamento de Pedidos  
+"No backend de direcionamento de pedidos:  
+ Envie pedidos apenas para parceiros com status 'Aprovado'  
+ Ignore pendentes/rejeitados"  
+Lista de Parceiros Aprovados (Admin)  
+"Na tela admin, adicione aba 'Parceiros Aprovados' com busca por nome/serviço e botão 
+'Suspender' (muda status 'Suspenso' se parceiro tiver reclamações)."  
+Opção de Bloquear serviço para Parceiros  (Admin)  
+"Na tela admin, adicione aba ' Bloquear / Liberar Serviç os parceiros ' com busca por 
+nome/serviço e botão ' Bloquear serviço” e “Desbloquear Serviço” ' (Parceiro não deve 
+saber se esta bloqueado ou não por essa opção )." 
+ 
+Painel do adm colocar opção de bloquear temporariamente qualquer parceiro de receber 
+pedidos t otal, só emissão ou só impressão.  
+Banner Inicial para Parceiros  
+"No dashboard do parceiro pendente: banner grande 'Aguardando aprovação manual. 
+Você será notificado em até 48h.' Desabilite lista de pedidos até aprovação."  
+Avaliação e Reclamação de Parceir os 
+
+=== PÁGINA 11 ===
+"Após conclusão de qualquer pedido (PDF entregue ou impressão retirada): Mostre tela 
+de avaliação ao cliente:  
+ Estrelas 1 -5 para o parceiro emissor e/ou impressor  
+ Campo texto opcional 'Comentário ou reclamação' Botão 'Enviar Avaliação'. 
+Salve avaliação n o perfil do parceiro (média de estrelas visível no 
+mapa/dashboard). Se estrelas ≤2: notifique admin + permita resposta do 
+parceiro. No dashboard admin: lista de reclamações com botão 'Suspender 
+parceiro'."  
+Prompt 2: Comissão Variável por Serviço  
+"Crie conf iguração admin (tela exclusiva): Tabela de comissões e preços por tipo de 
+serviço , Os preços colocados e atualizados aqui deve ser usado para cobrança e  
+pagamento em cada página  de serviço prestado respectivo no app,  podendo ser editada a 
+qualquer momento,  adicionar, retirar, mudar, etc .  
+*Incentivo "Cliente Faz Sozinho": desconto 20% no preço base em  
+serviços que tiver as 2 opções de execução (Ex. “Cliente faz sozinho” e 
+“Fazemos pra você”), aplicar e mostrar para cliente desconto se escolher 
+a opção “Clie nte faz sozinho” (ex: currículo R$4,00 (até 2 pag.)sozinho 
+vs R$5,00 (até 2 pag.) parceiro),. Se com desconto de 20% no preço preço 
+ficar quebrado Ex. R$4,05 arredondar preço para  menos Ex. R$4,00. Não 
+aplicar esse desconto onde o serviço não tem 2 opções de execução. A 
+intenção é para reduzir uso de parceiros quando isso é possível.  
+Normas de Cobrança e Divisão:  
+Observação: No caso do parceiro impressor e/ou emissor de documento for Loja Própria 
+Copinet (temos 2) o valor e porcentagem do parceiro fica com o app.  
+ 
+ 
+Divisão automática:  
+Modalidade Cliente faz Sozinho só PDF / Valor 100% do app  
+Modalidade Cliente faz Sozinho PDF + Impressão / Valor 60% do app ,  40% do  
+Parceiro impressor.  
+Modalidade Parceiro faz para o Cliente só PDF  / Valor 60% Parceiro, 40% ap p 
+Modalidade Parceiro faz pro cliente PDF +Impressão  (Mesmo Parceiro emite e imprime) 
+/ Valor 70% Parceiro, 30% app  
+Modalidade Pedido combinado  Parceiro Emite, outro parceiro imprime : divisão 
+automática (emissor 40%, impressor 30%, app 30%) . 
+
+=== PÁGINA 12 ===
+  “Ao criar pedi do, aplique preço e comissão automática conforme serviço e 
+transfira ao confirmar conclusão."  
+ 
+Antecedentes Criminais : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00  
+Antecedentes Criminais Federal : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00  
+Certi dão de Quitação Eleitoral : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00  
+Certidão de Crimes Eleitorais : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00  
+Impressão 2º Via do Titulo : Preço Só PDF R$8,00 / Preço PDF+ Impressão R$10,00  
+Certidão de Ação Cr iminal : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00  
+Certidão de Distribuição Cível em Geral – SAJ SGC : Preço Só PDF R$4,00 / Preço 
+PDF+ Impressão R$5,00  
+Certidão de distribuição de ações criminais : Preço Só PDF R$4,00 / Preço PDF+ 
+Impressão R$5,00  
+Situação Cadastral CPF : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00  
+Certidão negativa de debito : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00  
+Emissão de Boleto IPTU : Preço Só PDF R$3,00 / Preço PDF+ Impressão R$4,00  
+Emissão Certidão Negativa Debit o (Imóvel) : Preço Só PDF R$4,00 / Preço PDF+ 
+Impressão R$5,00  
+Emissão de DARF : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00  
+Imposto de Renda Pessoa Física (CPF)  : Preço Só PDF R$60,00 / Preço PDF+ 
+Impressão R$65,00  
+CRLV -e (Detran)  : Preço Só PDF R$10 ,00 / Preço PDF+ Impressão R$12,00  
+Débitos Veículo Detran : Preço Só PDF R$5,00 / Preço PDF+ Impressão R$6,00  
+Certidão de Pontos Na CNH  (Detran)  : Preço Só PDF R$8 ,00 / Preço PDF+ Impressão 
+R$10,00 
+Certidão de Prontuário CNH  (Detran)  : Preço Só PDF R$8 ,00 / Preço PDF+ Impressão 
+R$10,00 
+Extrato de Pagamento de Benefício  (INSS) : Preço Só PDF R$4,00 / Preço PDF+ 
+Impressão R$5,00 (Para Impressão: Até 2 folhas, folhas a mais cobrar R$1,50 a mais)  
+Requerer Benefício  Loas Assistencial (INSS)  : Preço Só PDF R$30 ,00 / Preço PDF+ 
+Impressão R$ 35,00 
+Simular Aposentadoria  (INSS)  : Preço Só PDF R$15,00 / Preço PDF+ Impressão 
+R$20 ,00 
+Consulta de Situação de Benefício  (INSS)  : Preço Só PDF R$10,00 / Preço PDF+ 
+Impressão R$15,00  
+Requerer Aposentadoria (INSS)  : Preço Só PDF R$30 ,00 / Preço PDF+ Impressão 
+R$35,00 
+Requerer Pensão por Morte (INSS)  : Preço Só PDF R$30 ,00 / Preço PDF+ Impressão 
+R$35,00 
+ 
+Requerer Auxílio -Doença  (INSS)  : Preço Só PDF R$20,00 / Preço PDF+ Impressão 
+R$25,00  
+ 
+Prorrogação de Beneficio (INSS)  : Preço Só PDF R$20,00 / Preço PDF+ Impressão 
+R$25,00  
+Extrato CNIS (INSS)  Preço Só PDF R$5,00 / Preço PDF+ Impressão R$6,00(Para 
+Impressão: Até 2 folhas, folhas a mais cobrar R$1,50 a mais)  
+ 
+
+=== PÁGINA 13 ===
+Cumprir Exigência (INSS) : Preço Só PDF R$15,00 / Preço PDF+ Impressão R$20,00  
+ 
+Contratos de Trabalho (CTPS)  Preço Só PDF R$5,00 / Preço PDF+ Impressão R$6,00 
+(Para Impressão: Até 2 folhas, folhas a mais cobrar R$1,50 a mais)  
+ 
+Entrada em Seguro Desemprego  (CTPS) : Preço Só PDF R$15,00 / Preço PDF+ 
+Impressão R$20,00  
+ 
+Agendamento (Poupa T empo) : Preço Só PDF R$10,00 / Preço PDF+ Impressão 
+R$12,00  
+Segunda  via contas (Consumo, Sabesp, CPFL etc.) : Preço Só PDF R$3,00 / Preço PDF+ 
+Impressão R$3,50  
+ 
+Emitir DAS mensal : Preço Só PDF R$2,50 / Preço PDF+ Impressão R$3,00  
+Declaração Anual DASN -SIMEI : Preço Só PDF R$50,00 / Preço PDF+ Impressão 
+R$55,00  
+NFS-e (Só para Serviços) : Preço Só PDF R$15,00 / Preço PDF+ Impressão R$20,00  
+Comprovant e CCMEI: Preço Só PDF R$5,00 / Preço PDF+ Impressão R$6,00  
+ 
+Criar Currículo Novo  Preço Só PDF R$5,00 / Preço PDF+ I mpressão R$6,00 (Para 
+Elaboração (se elaboração for por parceiro) e Impressão Até 2 folhas, folhas a mais 
+cobrar R$1,50 a mais)  
+ 
+Atualizar Currículo : Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00 (Para 
+Elaboração  (se elaboração for por parceiro)  e Imp ressão Até 2 folhas, folhas a mais 
+cobrar R$1,50 a mais)  
+  
+Envio de Curriculo Salvo no app ou no dispositivo do cliente pelo app, por Email, ou 
+por Whatsapp : Preço R$3,00   
+ 
+Curriculo com importação  e interação com  LinkedIn Geração/baixa do PDF final (com 
+dados importados)  Preço Só PDF R$4,00 / Preço PDF+ Impressão R$5,00 (Para 
+Elaboração e Impressão Até 2 folhas, folhas a mais cobrar R$1,50 a mais)  
+ 
+Contrato de Locação de Imóvel (Aluguel) : Preço Só PDF R$20,00 / Preço PDF+ 
+Impressão R$25,00  
+Contrato de Com pra e Venda de Imóvel : Preço Só PDF R$20,00 / Preço PDF+ 
+Impressão R$25,00  
+Recibo de Pagamento de Aluguel : Preço Só PDF R$5,00 / Preço PDF+ Impressão 
+R$6,00  
+Autorização para Vistoria : Preço Só PDF R$5,00 / Preço PDF+ Impressão R$6,00  
+Atualizar Meu Contrato  Preço Só PDF R$20,00 / Preço PDF+ Impressão R$25,00  
+ 
+Contrato de Prestação de Serviço Geral (autônomo) : Preço Só PDF R$20,00 / Preço 
+PDF+ Impressão R$25,00  
+Contrato para Diarista / Faxineira : Preço Só PDF R$20,00 / Preço PDF+ Impressão 
+R$25,00  
+
+=== PÁGINA 14 ===
+Contrato pa ra Reforma / Pedreiro / Pintor : Preço Só PDF R$20,00 / Preço PDF+ 
+Impressão R$25,00  
+Contrato para Mecânico / Oficina : Preço Só PDF R$20,00 / Preço PDF+ Impressão 
+R$25,00  
+Recibo de Pagamento de Serviço : Preço Só PDF R$5,00 / Preço PDF+ Impressão 
+R$6,00  
+ 
+Geral/Simples  ('Nov o Orçamento) : Preço Só PDF R$10,00 / Preço PDF+ Impressão 
+R$12,00(Para Elaboração (se elaboração for por parceiro) e Impressão Até 2 folhas, 
+folhas a mais cobrar R$1,50 a mais)  
+Reforma e Construção  ('Nov o Orçamento)  
+ 
+Manutenção e Reparos  ('Novo Orçamento) : Preço Só PDF R$10,00 / Preço PDF+ 
+Impressão R$12,00(Para Elaboração (se elaboração for por parceiro) e Impressão Até 2 
+folhas, folhas a mais cobrar R$1,50 a mais)  
+Reforma e Construção  ('Nov o Orçamento) : Preço Só PDF R$10,00 / Preço PDF+ 
+Impressão R$12,00(Para Elaboração (se elaboração for por parceiro) e Impressão Até 2 
+folhas, folhas a mais cobrar R$1,50 a mais)  
+ 
+ 
+Limpeza e Diarista  (Novo Orçamento)  ): Preço Só PDF R$10,00 / Preço PDF+ 
+Impressão R$12,00(Para Elaboração (se elaboração for p or parceiro) e Impressão Até 2 
+folhas, folhas a mais cobrar R$1,50 a mais)  
+ 
+Eventos e Buffet  (Novo Orçamento)  ): Preço Só PDF R$10,00 / Preço PDF+ Impressão 
+R$12,00(Para Elaboração (se elaboração for por parceiro) e Impressão Até 2 folhas, 
+folhas a mais co brar R$1,50 a mais)  
+ 
+Freelancer/TI/Consultoria  (Novo Orçamento)  ): Preço Só PDF R$10,00 / Preço PDF+ 
+Impressão R$12,00(Para Elaboração (se elaboração for por parceiro) e Impressão Até 2 
+folhas, folhas a mais cobrar R$1,50 a mais)  
+ 
+ 
+Declaração de Residência : Preço Só PDF R$8,00 / Preço PDF+ Impressão R$9,00  
+Declaração de União Estável : Preço Só PDF R$10,00 / Preço PDF+ Impressão R$12,00  
+Declaração de Hipossuficiência (para gratuidade justiça) : Preço Só PDF R$10,00 / 
+Preço PDF+ Impressão R$12,00  
+Autorização p ara Menor Viajar : Preço Só PDF R$10,00 / Preço PDF+ Impressão 
+R$12,00  
+ 
+ 
+Trabalho Escolar  
+Nível E ducação Infantil / Fundamental: Preço Só PDF R$2,00 (Por folha) / Preço PDF+ 
+Impressão R$2,00 (Por folha)  
+Nível Médio: Preço Só PDF R$3,00 (Por folha) / Preço P DF+ Impressão R$3,00 (Por 
+folha)  
+Nível Universitário : Preço Só PDF R$4,00 (Por folha) / Preço PDF+ Impressão R$4,00 
+(Por folha)  
+TCC : Preço Só PDF R$5,00 (Por folha) / Preço PDF+ Impressão R$5,00 (Por folha)  
+ 
+
+=== PÁGINA 15 ===
+Envio de Email: Preço R$3,00 (até 5 anexo, cada anexo a mais cobrar R$0,50)  
+ 
+Impressão Papel Comum P&B : R$1 ,00 (Por folha)  (Acima de 20 paginas preço da folha 
+cai para R$0,90 cada / Acima de 40 paginas preço por pagina cai para R$0,70 / Acima 
+de 60 paginas preço por pagina cai para R$0.60)  
+ 
+Impressão Pa pel Comum Colorido : R$1,50 (Por Folha)  ) (Acima de 20 paginas preço da 
+folha cai para R$1,20 cada / Acima de 40 paginas preço por pagina cai para R$1,00 / 
+Acima de 60 paginas preço por pagina cai para R$0,90)  
+ 
+ 
+Impressão Papel fotográfico Tamanho 10x15 : R$3,00 (Por folha)  
+Impressão Papel fotográfico Tamanho 13x18 : R$5,00 (Por folha)  
+Impressão Papel fotográfico Tamanho 15x21 : R$7,00 (Por folha)  
+Impressão Papel fotográfico Tamanho 21x29 (A4) : R$9,00 (Por folha)  
+ 
+ 
+Foto 3x4 (6 fotos) : Preço Só PDF R$5,00 (Por f olha) / Preço PDF+ Impressão R$8,00 / 
+Preço Impressão Mais corte  (6 Fotos) R$14,00  
+ 
+Escancear Documentos para PDF : Preço até 3 documentos R$3,00  Cada documento 
+(folha) a mais R$0,50.  
+ 
+Inscrições  
+Concurso Público : Preço Só PDF R$40,00 / Preço PDF+ Impressão  R$45,00  
+Sites de Emprego : Preço Só PDF R$40,00 / Preço PDF+ Impressão R$45,00  
+Cursos e Vestibulinho : Preço Só PDF R$40,00 / Preço PDF+ Impressão R$45,00  
+Serviços Customizados / Tela Livre : Preço A Combinar.  
+ 
+Cálculo Automático do Ranking  
+"No backend (Supa base ou lógica): Calcule score de ranking para cada parceiro 
+aprovado:  
+ Média de estrelas (peso 50%)  
+ Taxa de conclusão (pedidos aceitos/concluídos ÷ aceitos, peso 30%)  
+ Tempo médio de resposta/conclusão (quanto menor, melhor, peso 10%)  
+ Número de reclamações (quanto menos, melhor, peso 10%) Atualize score a 
+cada novo pedido/avaliação. Score de 0 a 100 (ex: 95 = excelente)."  
+Exibição do Ranking para Clientes  
+"Na tela de escolha de parceiro (ou mapa de impressão): Mostre parceiros ordenados 
+por ranking (melhor p rimeiro). Para cada parceiro:  
+ Nome + foto (se upload)  
+ Estrelas médias (ex: 4.8 ★★★★★ ) 
+
+=== PÁGINA 16 ===
+ Badge de score: 'Top Parceiro' se >90, 'Excelente' >80, 'Bom' >70  
+ Número de pedidos concluídos  
+ Tempo estimado atual (baseado em disponibilidade) Texto: 'Priorizamos 
+parce iros melhor avaliados para maior qualidade'."  
+Badge e Destaque no Dashboard/Mapa  
+"No mapa de lojas/parceiros e lista de pedidos:  
+ Parceiros com score >90: badge dourado 'Top Ranked' + prioridade máxima em 
+direcionamento  
+ 80: badge prata  
+ Destaque visual (bord a colorida ou ícone estrela) Priorize envio de pedidos para 
+parceiros com ranking mais alto (mas equilibre carga com 'próximo 
+disponível')."  
+Ranking Visível no Perfil do Parceiro  
+"No dashboard do parceiro: Mostre card 'Seu Ranking':  
+ Score atual (ex: 92/100 ) 
+ Posição no ranking local (ex: Top 5 na Baixada Santista)  
+ Detalhes: média estrelas, taxa conclusão, tempo médio Dica: 'Mantenha 
+avaliações altas e respostas rápidas para subir no ranking e receber mais 
+pedidos!'."  
+ 
+Ranking no Admin  
+"Na tela admin de parce iros: Ordene lista por ranking descendente. Colunas: Nome, 
+Score, Estrelas médias, Pedidos concluídos, Reclamações. Filtro: 'Top 10', 'Abaixo de 
+70', 'Novos'."  
+Atualização em Tempo Real  
+"A cada nova avaliação ou pedido concluído:  
+ Recalcule score imediatame nte 
+ Atualize posição no ranking  
+ Notifique parceiro se subir/cair de faixa (ex: 'Parabéns! Agora você é Top 
+Ranked')"  
+ 
+Opção de Cancelamento Parcial no Pedido  
+"Na tela de detalhes do pedido (após pagamento), adicione botão 'Cancelar Parte do 
+Pedido'. Mostre  opções:  
+
+=== PÁGINA 17 ===
+ 'Cancelar só a impressão (manter emissão do PDF)'  
+ 'Cancelar só a emissão (manter impressão)'  
+ 'Cancelar tudo' Texto: 'Reembolso parcial proporcional será feito 
+automaticamente via Pix'."  
+Fluxo de Cancelamento Parcial  
+"Ao escolher 'Cancelar só a imp ressão':  
+ Confirmação popup: 'Você receberá reembolso de R$25 da impressão. A 
+emissão do PDF continua normalmente. Confirma?'  
+ Se sim: atualize pedido no backend (marque impressão como cancelada)  
+ Notifique parceiro impressor: 'Impressão cancelada pelo client e' 
+ Inicie reembolso automático parcial via gateway (Mercado Pago ou similar)  
+ Mostre ao cliente: 'Reembolso de (Valor Pago)  iniciado. PDF será entregue 
+normalmente'."  
+Cancelamento da Emissão (com Impressão Mantida)  
+"Ao escolher 'Cancelar só a emissão':  
+ Conf irmaçã o: 'Você receberá reembolso de (Valor pago)  da emissão. Deseja 
+manter a impressão do PDF atual (se já emitido)?'  
+ Se sim: mantenha impressão ativa  
+ Notifique parceiro emissor: 'Emissão cancelada pelo cliente'  
+ Reembolso parcial automático  
+ Se PDF já emit ido: libere para impressão normalmente."  
+Cancelamento Total  
+"Ao escolher 'Cancelar tudo':  
+ Confirmação: 'Reembolso total de (Valor pago)  será feito. Pedido cancelado. 
+Confirma?'  
+ Notifique todos parceiros envolvidos  
+ Reembolso total automático  
+ Mostre: 'Pedido  cancelado e reembolso iniciado'."  
+Limites e Política de Cancelamento  
+"Adicione regra no backend:  
+ Cancelamento parcial/total permitido só antes da emissão do PDF (ou nos 
+primeiros 10 minutos após pagamento)  
+ Após emissão do PDF: só cancelamento da impressão  (se ainda não impressa) 
+Banner na tela de pedido: 'Cancelamento parcial disponível antes da emissão do 
+documento'."  
+: Histórico com Reembolsos  
+
+=== PÁGINA 18 ===
+"Na tela 'Meus Pedidos', mostre status:  
+ 'Emissão concluída'  
+ 'Impressão cancelada (reembolso (valor pago) )' 
+ 'Reem bolso parcial/total iniciado em [data]'"  
+ 
+CONFORMIDADE E PROTEÇÕES:  
+ Onboarding com aceite obrigatório de Termos de Uso e Política de Privacidade 
+(WebView com URLs externas).  
+ Consentimentos explícitos LGPD para câmera (OCR dados sensíveis), 
+localização e no tificações.  
+ Tela "Meus Direitos LGPD" com solicitações de acesso/correção/exclusão.  
+ Preview de conteúdos pagos (trabalhos, orçamentos, contratos) com marca 
+d'água grande e bloqueio até pagamento.  
+ Banner ético contra plágio em seções acadêmicas.  
+ Responsabil idade clara nos Termos: app facilita, emissão oficial depende de 
+sites gov.br e dados corretos do usuário.  
+Backend: Supabase para autenticação, banco de dados, storage de PDFs temporários e 
+realtime (pedidos/notificações).  
+ Adicione funcionalidade de preenc himento por voz em todos os campos de 
+coleta de dados para todos os serviços no app Copinet Serviços Digitais.  
+ 
+Em cada tela de coleta de dados (ex: CPF, RG, data de nascimento, endereço, 
+descrição do serviço, instruções adicionais):  
+- Ao lado de cada camp o de texto (input ou textarea), adicione um botão grande 
+com ícone de microfone.  
+- Texto ao lado do botão: 'Falar para preencher' (visível para idosos).  
+- Ao clicar no botão:  
+  - Inicie reconhecimento de voz nativo do dispositivo (use Expo 
+SpeechRecognitio n ou biblioteca similar).  
+  - Mostre indicador 'Ouvindo...' com animação de microfone piscando.  
+  - Converta fala em texto e preencha automaticamente o campo correspondente.  
+  - Permita parar com botão 'Parar' ou timeout de 10 segundos.  
+  - Suporte portugu ês (pt -BR) com alta precisão.  
+  - Após preenchimento: mostre confirmação rápida 'Texto preenchido: [texto]' 
+com botão 'Corrigir' (reabre voz) ou 'Confirmar'.  
+- Para campos múltiplos (ex: lista de experiências em currículo): permita 
+adicionar item por voz r epetidamente.  
+- Adicione permissão explícita no onboarding ou primeira vez: popup 'Permitir 
+microfone para preenchimento por voz? (útil para idosos e quem tem dificuldade 
+de digitar)'.  
+- Integre com OCR existente: se OCR já preencheu, voz pode corrigir ou 
+complementar.  
+
+=== PÁGINA 19 ===
+- Mantenha design acessível: botões grandes, texto alto contraste, suporte para 
+modo alto contraste do sistema.  
+ 
+Seções principais de Serviços (menu expansível ou cards na Home):  
+1. Certidões e Documentos Oficiais  
+o Antecedentes Criminais SP  
+(Caix a para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (RG, CNH, etc) para preenchimento 
+automático das caixas com dados do cliente)  
+Dados necessários: Nome Completo / RG ou CIN/ Data de Expedição / 
+Sexo (Masculino/Femin ino)/  Data de Nascimento (formato ___/___/___) 
+/ Nome da Mãe / Nome do Pai (Se só mãe selecionar (só Mãe)/.  
+ 
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço): 
+https://www2.ssp.sp.gov.br/aacweb/carrega -formulario  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ 
+o Antecedentes Criminais Federal  
+(Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de docum entos (RG, CNH, etc) para preenchimento 
+automático das caixas com dados do cliente)  
+Dados necessários: CPF / Nome Completo / Nacionalidade (ex. Brasil) /  
+Nascimento (formato ___/___/___) /País de Nascimento (ex. Brasil) / UF 
+Nascimento (Estado que Nasceu)/  Município de Nascimento (Cidade 
+Onde Nasceu)  / Nome da Mãe / Nome do Pai (Se só mãe selecionar (só 
+Mãe) )/ RG ( Numero, Orgão de expedição (ex. se for de SP o Orgão de 
+Expedição é SSP), UF de Expedição (ex. Se for RG de SP UF de 
+Expedição é SP)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço): https://www.gov.br/pt -
+br/servicos/emitir -certidao -de-antecedentes -criminais  
+ 
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ Emissão de Boleto Pagamento IPTU  
+ 
+
+=== PÁGINA 20 ===
+(Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (CPF, Folha IPTU) para preenchimento 
+automático das caixas com dad os do cliente)  
+Dados necessários: CPF / Nome Completo / Numero Inscrição do Imóvel 
+/ Cidade e Estado localização do Imóvel)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço): Procurar Site de Serviços  do Município 
+de Localização do Imóvel.  
+ 
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ 
+ Emissão Certidão Negativa Debito (Imóvel  
+ 
+(Caixa para preenchimento p elo cliente e opção de botão para extração 
+ocr uploads de documentos (CPF, Folha IPTU) para preenchimento 
+automático das caixas com dados do cliente)  
+Dados necessários: CPF / Nome Completo / Numero Inscrição do Imóvel 
+/ Cidade e Estado localização do Imóve l)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço): Procurar Site de Serviços do Município 
+de Localização do Imóvel.  
+ 
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+o TSE  
+ Certidão de Quitação  Eleitoral  
+ Certidão de Crimes Eleitorais  
+ Impressão 2º Via do Titulo  
+(Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (R G, CNH, etc) para preenchimento 
+automático das caixas com dados do cliente)  
+Dados necessários : Nome Completo / Numero do Titulo Eleitoral ou 
+CPF/ Nome da Mãe / Nome do Pai (Se só mãe selecionar (só Mãe)/ Data 
+de Nascimento (formato ___/___/___).  
+Link para  o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço): https://www.tse.jus.br/servicos -
+eleitorais/autoatendimento -eleitoral# / 
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ 
+
+=== PÁGINA 21 ===
+o Certidões TJSP  
+ Certidão de Ação Criminal  
+ Certidão de Distribuição Cível em Geral – SAJ SGC  
+ Certidão de distribuição de ações criminais  
+(Caixa para preenchimento pelo cliente e opção de botão para ex tração 
+ocr uploads de documentos (RG, CNH, etc) para preenchimento 
+automático das caixas com dados do cliente)  
+Dados necessários : Nome Completo / CPF/ RG/ Genero 
+(masculino/feminino)/ Nome da Mãe / Nome do Pai / Data de 
+Nascimento (formato ___/___/___)/ N aturalidade (cidade/Estado)  
+Email (Avisar cliente que ele recebera a certidão em seu email em até 5 
+dia – Após emissão parceiro faz uploads do protocolo do pedido da 
+certidão e cliente é avisado que esse documento é apenas o protocolo, a 
+certidão será envi a pelo site TJSP para o email do cliente no prazo de 5 
+dias “Pode chegar antes”.  
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço) 
+https://es aj.tjsp.jus.br/sco/abrirCadastro.do  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ 
+o Receita Federal  
+Situação Cadastral CPF  
+(Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (RG, CNH, etc) para preenchime nto 
+automático das caixas com dados do cliente)  
+Dados necessários: CPF/ Data de Nascimento (formato ___/___/___)  
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço): 
+https://servicos.receita.fazenda.gov.br/Servicos/CPF/ConsultaSituacao/C
+onsultaPublica.asp  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Certidão negativa de debito  
+Caixa para preenc himento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (RG, CNH, etc) para preenchimento 
+automático das caixas com dados do cliente)  
+
+=== PÁGINA 22 ===
+Dados necessários: CPF/ Data de Nascimento (formato ___/___/___)  
+Link para o serviço (para enviar ju nto com os dados do cliente para o 
+parceiro que vai fazer o serviço): 
+https://servicos.receitafederal.gov.br/servico/certidoes/#/home  
+ 
+o Fluxo: opção única "Fazemos pra você " via parceiro.  
+ 
+ Emissão de DARF (boleto) para pagamento de Imposto de renda  
+ 
+Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (CPF, DARF antiga) para preenchimento 
+automático das caixas com dados do cliente)  
+Dados necessários: CPF/ Data de Nascimento (formato ___/___/___)  
+/ Quota quer vai pagar (Ex. 1º quota, 2º quota)/ Dia que vai efetuar o 
+pagamento (Deve ser dentro do mês vigente)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceir o que vai fazer o serviço): 
+https://sicalc.receita.fazenda.gov.br/sicalc/rapido/contribuinte/0211/01  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ 
+ Imposto de R enda  Pessoa Física (CPF) (Aviso “Apenas p ara 
+CLT”) (Aviso “Não declaramos  investimentos em Ações, Cripto 
+Moedas, etc)  
+Seleciona Ano Exercício (listar ultimo 5 anos)  
+(Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de docume ntos (RG, CNH, etc) para preenchimento 
+automático das caixas com dados do cliente), Nesta Seção Colocar 2 
+botões , Botão  um “Fazer com Meu Dados” (ao clicar em fazer com meus 
+dados cliente é informado que precisará preencher um formulário com 
+seus dados , e também precisará fazer uploads (enviar ) seus informes de 
+rendimentos (documento que a empresa onde Trabalha/trabalhou lhe 
+fornece  para fazer o imposto de renda)e abri a tela de coleta de dados.  
+ 
+Botão Dois  “Fazer com GOV.BR” (ao clicar em Fazer com GOV.BR,  
+cliente é informado que dev erá informar sua senha Gov.br e que a 
+mesma não pode estar com “VERIFICVAÇÃO EM 2 ETAPAS 
+ATIVADO” cliente deve ser avisado que deve “Desativar verificação em 
+2 etapas no seu app gov.br antes de enviar a senha para fazer sua 
+declaração”, o app deve avisar também que o cliente deve reativar A 
+VERIFICAÇÃO EM 2 ETAPAS, após sua declaração estar feita, cliente 
+é direcionado para tela “Fazer com GOV.BR”.  
+ 
+
+=== PÁGINA 23 ===
+Tela Coleta de Dados Botão “fazer com meu dados”  
+Dados necessários: Nome Completo  / CPF/ Data de Nascimento 
+(formato ___/___/___) / Endereço Completo / Telefone para contato 
+(preferencia Whatapp) / Dados de Uma Conta Bancaria (Nome do Banco 
+/ Numero da Conta / Agencia), Opção se Cliente Tiver alguma Chave Pix 
+que seja o CPF não precisa informar dados Bancários basta assinalar a 
+caixa “Meu Pix é o CPF” / Dependentes (Conjugue ou filhos menor de 21 
+anos que não tenha trabalhado no ano anterior).  
+Botão para Uploads (envio) de documentos (informe de rendimento das 
+empresas (adicionável), Informe gasto com educação próprio ou 
+dependentes  (Adicionável), Informe Gasto com Saúde (Adicionável), 
+Informes Bancários (Adicionável) , Outros documentos (Adicionável).  
+ 
+Tela “Fazer com GOV.BR”  
+Dados necessários: Nome Completo / Senha GOV.BR / CPF/ Endere ço 
+Completo / Telefone para contato (preferencia Whatapp)/ Dados de Uma 
+Conta Bancaria (Nome do Banco / Numero da Conta / Agencia), Opção 
+se Cliente Tiver alguma Chave Pix que seja o CPF não precisa informar 
+dados Bancários basta assinalar a caixa “Meu Pix  é o CPF”.  
+ 
+Após cliente enviar dados em qualquer das 2 opções  ir para o fluxo de 
+pagamento.  
+Após pagamento d eixar chat livre para esclarecer duvidas até termino da 
+declaração que será disponibilizada em pdf no app  em pedidos do 
+cliente. App gera um numer o de pedido e QRCode.  
+Após envio de dados cliente deve ser informado que pode entra em 
+contato via chat sempre que tiver duvidas. Prazo para entregar sua 
+declaração pronto de 3 dias.  
+ 
+Serviços de Imposto de renda deve ser direcionado apenas para Lojas 
+Oficial Copinet Ou Só ao ADM.  
+o Fluxo: única "Fazemos pra você".  
+ 
+ 
+"Adicione uma nova seção no menu de Serviços chamada ' DETRAN ' com as opções:  
+CRLV -e (Documento de Licenciamento ou Documento de Andar)  
+Adicione u m banner no topo: “ Necessário  Informar Senha  gov.b r. Recomendamos nível  
+prata ou ouro .'" 
+Cliente deve ser avisado que “VERIFICAÇÃO EM 2 ETAPAS DEVE 
+ESTAR DES ATIVAD A NO SEU APP GOV.BR antes de enviar a 
+senha” 
+Cliente deve ser avisa que “Documento Atualizado só esta rá disponível 
+após 3 dias do pag amento da taxa de Licenciamento”  
+ 
+
+=== PÁGINA 24 ===
+(Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (RG, CNH, etc) para preenchimento 
+automático das caixas com dados do cliente)  
+Dados necessários : CPF/ Senha Gov.br / Placa /RENAVAM)  
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço) 
+https://www.detran.sp.gov.br/detransp/pb/servico/veiculos/imprimir_lice
+nciamento_digital_frotistas?id=carta_de_servico_imprimir_licenciament
+o_digital_frotistas  
+Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ 
+Débitos Veículo Detr an, IPVA,  Licenciamento, Multas  
+ (Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (CRLV) para preenchimento automático das 
+caixas com dados do cliente)  
+Dados necessários : Renavam / Placa.  
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço):  
+https://www.ipva.fazenda.sp.gov.br/IPVANET_Consulta/Consulta.aspx  
+o Fluxo: opção única "Faz emos pra você" via parceiro.  
+ 
+ Certidão de Pontos Na CNH  
+Adicione u m banner no topo: “ Necessário  Informar Senha  gov.br. Recomendamos nível  
+prata ou ouro .'" 
+Cliente deve ser avisado que “VERIFICAÇÃO EM 2 ETAPAS DEVE 
+ESTAR DESATIVADA NO SEU APP GOV.BR antes d e enviar a 
+senha”  
+ 
+(Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de documentos (CNH) para preenchimento automático das 
+caixas com dados do cliente)  
+Dados necessários: CPF/ Senha Gov.br / Numero Registro CNH  
+Link para o s erviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço): 
+https://www.de tran.sp.gov.br/detransp/pb/servico/habilitacao/emitir_certi
+dao_pontos_cnh?id=carta_de_servico_emitir_certidao_pontos_cnh  
+
+=== PÁGINA 25 ===
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ 
+ Certidão de Prontuário CNH  
+ 
+Adicione u m banner no topo: “ Necessário  Informar Sen ha gov.br. Recomendamos nível  
+prata ou ouro .'" 
+Cliente deve ser avisado que “VERIFICAÇÃO EM 2 ETAPAS DEVE 
+ESTAR DESATIVADA NO SEU APP GOV.BR antes de enviar a 
+senha”  
+ 
+(Caixa para preenchimento pelo cliente e opção de botão para extração 
+ocr uploads de docu mentos (CNH) para preenchimento automático das 
+caixas com dados do cliente)  
+ 
+Dados necessários : CPF/ Senha Gov.br / Numero Registro CNH  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço): 
+https://www.detran.sp.gov.br/detransp/pb/servico/habilitacao/_emitir_cer
+tidao_prontuario_cnh?id=carta_de_servic o_emitir_certidao_prontuario_c
+nh 
+ 
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+Tela principal de Serviços INSS  
+"Adicione uma nova seção no menu de Serviços chamada 'INSS' com as opções:  
+Adicione u m banner no topo: “ Necessário  Informar Senha  gov.br . Recomendamos nível  
+prata ou ouro .'" 
+Cliente deve ser avisado que “VERIFICAÇÃO EM 2 ETAPAS DEVE 
+ESTAR DESATIVADA NO SEU APP GOV.BR antes de enviar a 
+senha”  
+ Extrato de Pagamento de Benefício  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br  
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço):  https://meu.inss.gov.br/#/login  
+
+=== PÁGINA 26 ===
+o Fluxo: opção única "Faz emos pra você" via parceiro.  
+ Requerer Benefício  Loas (Assistencial)  
+(Caixa para preenchimento pelo cliente)  
+Dados necessários: CPF/ Senha Gov.br / Qual Beneficio Quer Solicitar  
+Botão Para UPloads de Documentos Necessários  
+Depois de Pagamento Abre Chat Par a Envio de mais documentos se 
+preciso e troca de orientação e informações entre cliente e Parceiro que 
+aceitou serviço. (parceiro escolhido de acordo com questionários que 
+respondeu, só para parceiros que sabe fazer esse serviço)  
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Simular A posentadoria  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br / Outros informações  
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Consulta de Situação de Benefício  
+(Caixa para preenchimento pelo cliente)  
+Dados necessários: CPF/ Senha Gov.br / Número do Bene ficio / Outros 
+informações  
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Requerer Aposentadoria  
+(Caixa para preenchimento pelo cliente)  
+ 
+
+=== PÁGINA 27 ===
+Dados necessários: CPF/ Senha Gov.br / Qual Aposentadoria Quer 
+Solicitar  
+ 
+Botão Para UPloads  de Documentos Necessários: Foto ou pdf de CTPS, 
+Copia ( foto ou pdf) RG.  
+Depois de Pagamento Abre Chat Para Envio de mais documentos se 
+preciso e troca de orientação e informações entre cliente e Parceiro que 
+aceitou serviço. (parceiro escolhido de acordo com questionários que 
+respondeu, só para parceiros que s abe fazer esse serviço)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opçã o única "Fazemos pra você" via parceiro.  
+ 
+ Requerer Pensão por Morte  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br  
+ 
+Botão Para UP loads de Documentos Necessários: Certidão de Óbito, 
+Certidão de casamento, RG e CPF (Falecido e Beneficiário da Pensão).  
+Depois de Pagamento Abre Chat Para Envio de mais documentos se 
+preciso e troca de orientação e informações entre cliente e Parceiro que 
+aceitou serviço. (parceiro escolhido de acordo com questionários que 
+respondeu, só para parceir os que sabe fazer esse serviço)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Requerer Auxílio -Doença  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br  
+ 
+Botão Para UP loads de Documentos Necessários: RG, Laudo, Exames e 
+receitas medicas, se registrado (CLT ) enviar Declaração de ultimo dia 
+trabalhado.  
+Depois de Pagamento Abre Chat Para Envio de mais documentos se 
+preciso e troca de orientação e informações entre cliente e Parceiro que 
+
+=== PÁGINA 28 ===
+aceitou serviço. (parceiro escolhido de acordo com questionários que 
+respo ndeu, só para parceiros que sabe fazer esse serviço)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.ins s.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Prorrogação de Beneficio  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br / Nº do  Benefício  que Quer 
+Prorrogar  
+ 
+Botão Para UPloads de Docum entos Necessários : RG, Laudo, Exames e 
+receitas medicas, se registrado (CLT) enviar Declaração de ultimo dia 
+trabalhado.  
+Depois de Pagamento Abre Chat Para Envio de mais documentos se 
+preciso e troca de orientação e informações entre cliente e Parceiro que 
+aceitou serviço.  (parceiro escolhido de acordo com questionários que 
+respondeu, só para parceiros que sabe fazer esse serviço)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Extrato de Pagamento de Beneficio  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br / Nº do Benefíc io / Qual mês 
+quer o extrato (Ex. de 01/2026 á 03/2026)  
+ 
+Botão Para UPloads de Documentos se Necessários  
+Depois de Pagamento Abre Chat Para Envio de mais documentos se 
+preciso e troca de orientação e informações entre cliente e Parceiro que 
+aceitou serviço . (parceiro escolhido de acordo com questionários que 
+respondeu, só para parceiros que sabe fazer esse serviço)  
+ 
+
+=== PÁGINA 29 ===
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Extrato CNIS (Contribuição)  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br / Extrato Simplifica do (Só 
+contribuição) / Extrato Completo (Contribuição e Valor de 
+Contribuição).  
+ 
+Botão Para UPloads de Documentos se Necessários  
+Depois de Pagamento Abre Chat Para Envio de mais documentos se 
+preciso e troca de orientação e informações entre cliente e Parc eiro que 
+aceitou serviço. (parceiro escolhido de acordo com questionários que 
+respondeu, só para parceiros que sabe fazer esse serviço)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Cumprir Exigência  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br / Qual  Beneficio Quer Solicitar  
+ 
+Botão Para UPloads de Documentos Necessários  
+Depois de Pagamento Abre Chat Para Envio de mais documentos se 
+preciso e troca de orientação e informações entre cliente e Parceiro que 
+aceitou serviço. (parceiro escolhido de acordo com questionários que 
+respondeu, só para parceiros que sabe fazer esse serviço)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://meu.inss.gov.br/#/login  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+Cada opção deve ter um ícone relacionado (use ícones do Material Icons 
+como 'account -balance', 'calendar -today', 'calculate')  
+
+=== PÁGINA 30 ===
+ 
+"Adicione uma nova seçã o no menu  de Serviços chamada “Carteira de Trabalho 
+Digital” 'CTPS ' com as opções:  
+Adicione u m banner no topo: “ Necessário  Informar Senha  gov.br. Recomendamos nível  
+prata ou ouro .'" 
+Cliente deve ser avisado que “VERIFICAÇÃO EM 2 ETAPAS DEVE 
+ESTAR DESATIVADA NO SEU APP GOV.BR antes de enviar a 
+senha”  
+ Contratos de Trabalho (Imprimir ou Enviar)  
+ 
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br  
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o se rviço): https://www.gov.br/pt -br/servicos/obter -a-carteira -de-
+trabalho  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+ Entrada em Seguro Desemprego  
+Cliente Deve ser avisa q ue “Só Daremos Entrada se Você Tiver 
+Direito ao Beneficio”  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br / Nº Requeimo Seguro 
+Desemprego / Se deseja receber em uma conta específica (Caso Tenha 
+Direito) dados da conta (banco Agencia e Conta) Caso não preencha 
+recebera em uma agencia caixa ou Lotérica.  
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://www.gov.br/pt -br/servicos/obter -a-carteira -de-
+trabalho  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+o  
+"Adicione uma nova seçã o no menu de Serviços chamada “ Agendamento Poupatempo ” 
+com as opções:  
+Adicione u m banner no topo: “ Necessário  Informar Senha  gov.br. Recomendamos nível  
+prata ou ouro .'" 
+
+=== PÁGINA 31 ===
+Cliente deve ser avisado que “VERIFICAÇÃO EM 2 ETAPAS DEVE 
+ESTAR DESATIVADA NO SEU APP GOV.BR antes de enviar a 
+senha”  
+ 
+ Agendamento   
+Serviço que quer agendar: Caixa com opção, 2º via de rg, renovaçã o de 
+CNH , outros (Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Senha Gov.br / Serviços que quer agendar  
+ 
+Após pagamento abre chat entre prestador e cliente para trocas de 
+informações como dias e horários disponíveis.  
+ 
+Link para o serviço  (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): https://www.poupatempo.sp.gov.br/  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+"Adicione uma nova seçã o no menu de Serviços chamada “2º Via de Contas”  com as 
+opções:  
+ 
+Segunda  via contas ( Consumo, Sabesp, CPFL etc.)  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF/ Numero de Fornecimento ou Instalação  
+Perguntar se cliente se tem Cadastro na s Empresas d e fornecimento, se 
+tem senha e login para emissão, se sim disponibilizar campo para colocar 
+login e senha (empresa Ex. CPFL ou Sabesp ,etc) 
+ 
+Após pagamento abre chat entre prestador e cliente para trocas de 
+informações como dias e horários disponíveis.  
+Link  para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): CPFL Pelo whats app nº (19) 9998 -8888 – Sabesp 
+Whats app nº (11) 3388 -8000.  
+Se cliente Selecionar tenho Cadastro Envia login e senha do cliente para o 
+parceiro que vai emitir a segunda via.  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+
+=== PÁGINA 32 ===
+ 
+2. MEI 
+o Emitir DAS mensal  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CNPJ/ Mês que pretende emitir / Data que pretende 
+pagar (Data não pode ser maior que u ltimo dia do mês vigente)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): 
+https://www8 .receita.fazenda.gov.br/SimplesNacional/Aplicacoes/ATSPO/dasns
+imei.app/Identificacao  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+o Declaração Anual DASN -SIMEI  
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CNPJ/ Ano que pretende declar ar / Atividade do MEI 
+(Comercio/Serviço/ Transportes de Carga) / Valor que pretende declarar 
+Opção para colocar valor (dentro do limite até R$81.000 Anual Para 
+Comercio/Serviço e R$251.000 para Transporte de Cargas)  
+ 
+Link para o serviço (para enviar junto  com os dados do cliente para Loja Propria 
+COPINET  que vai fazer o serviço): 
+https://www8.receita.fazenda.gov.br/SimplesNacional/Aplicacoes/ATSPO /dasns
+imei.app/Identificacao  
+Esse serviço só deve ser d irecionado para lojas Próprias  Copinet ou adm.  
+o Fluxo: opção única "Fazemos pra você".  
+ 
+o NFS-e (Só para Serviços)  
+Adicione u m banner no topo: “ Necessário  Informar Senha  gov.br. Recomendamos nível  
+prata ou ouro .'" 
+Cliente deve ser avisado que “VERIFICAÇÃO EM 2 ETAPAS DEVE 
+ESTAR DESATIVADA NO SEU APP GOV.BR” antes de enviar a 
+senha”  
+ 
+
+=== PÁGINA 33 ===
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF / CNPJ/ Senha Gov.br / Descrição do Serviço / 
+Valor do Servi ço / Data de Prestação do Serviço / Condição de 
+pagamento / Outros (campo livre para o cliente preencher)  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o parceiro 
+que vai fazer o serviço): 
+https://sso.acesso.gov.br/login?client_id=nfse.gov.br&authorization_id=19bd19
+4d8e5  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+o Comprovante CCMEI.  
+Adicione u m banner no topo: “ Necessário  Inform ar Senha  gov.br. Recomendamos nível  
+prata ou ouro .'" 
+Cliente deve ser avisado que “VERIFICAÇÃO EM 2 ETAPAS DEVE 
+ESTAR DESATIVADA NO SEU APP GOV.BR” antes de enviar a 
+senha”  
+ 
+(Caixa para preenchimento pelo cliente)  
+ 
+Dados necessários: CPF / CNPJ/ Senha Gov. br  
+ 
+Link para o serviço (para enviar junto com os dados do cliente para o 
+parceiro que vai fazer o serviço):  
+https://sso.acesso.gov.br/login? client_id=mei.receita.economia.gov.br&a
+uthorization_id=19bd1966b00  
+o Fluxo: opção única "Fazemos pra você" via parceiro.  
+ 
+1 - Seção principal de Currículos  / com 2 opções  FAÇA VOCÊ MESMO 
+FACILITAMOS PRA VOCÊ ou FAZEMOS PRA VOCÊ  
+ 
+"Adicione uma nova seção no menu de Serviços chamada 'Currículos' com ícone de  
+'document'. Na tela inicial da seção, mostre opções grandes:  
+ 
+'Criar Currículo Novo' (botão principal)  
+'Atualizar Currículo Antigo' (com ícone de upload)  
+'Meus Currículos Salvos' (lista de currículos anter iores do usuário logado)  
+Adicione texto: 'Crie ou atualize seu currículo com modelos profissionais. Inclua foto e  
+exporte em PDF. Armazenamos seus dados para edições futuras.'"  
+
+=== PÁGINA 34 ===
+ 
+2- Criação de currículo novo com modelos e foto  
+"Crie tela 'Criar Currículo No vo'. Mostre uma galeria horizontal de 5 -8 modelos de 
+currículo  
+(simples, moderno, criativo, executivo, etc. (Procure na rede ou gere modelos 
+diferentes para cada categoria ) com preview de thumbnail (use imagens  
+placeholders ou descreva: modelo 1 coluna limp o, modelo colorido com barra lateral, 
+etc.).  
+Ao escolher um modelo, abra editor com campos fáceis de preencher:  
+Dados pessoais: nome, endereço, telefone, email, LinkedIn  
+Foto: botão 'Adicionar Foto' que abre câmera ou galeria, recorta automaticamente em  
+círculo ou quadrado  
+Objetivo profissional (textarea)  
+Experiência profissional (lista adicionável: cargo, empresa, período, descrição)  
+Formação acadêmica (lista adicionável)  
+Habilidades (chips adicionáveis)  
+Idiomas e cursos extras  
+Use formulário com autocompl ete e máscaras (telefone, CEP). Botão 'Visualizar PDF' 
+que gera preview em tempo real  (Bloquear Print em prévia antes de pagamento) . 
+Botão 'Salvar e Baixar' que salva no banco de dados do  usuário (Supabase) e só 
+libera download PDF após pagamento Pix."  
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base , se possível mostre preço normal e preço com desconto.  
+Fluxo Específico para "Cliente Faz Sozinho"  
+ 
+3- Atualização via OCR de currículo antigo (diferencial  
+forte!)  
+"Adicione tela 'A tualizar Currículo Antigo'. Permita upload de PDF ou foto de um 
+currículo  desatualizado (botão 'Fazer upload' ou 'Tirar foto').  
+Use OCR avançado (ML Kit ou biblioteca similar) para extrair automaticamente:  
+Nome, telefone, email  
+Experiências (cargo, empresa , período)  
+Formação  
+Habilidades  
+Mostre os dados extraídos em campos editáveis do editor de currículo  
+(mesmo do Prompt  2). Permita escolher um modelo novo para aplicar.  
+Texto explicativo: 'Envie seu currículo antigo e nós extraímos os dados 
+automaticamente . 
+Edite o que precisar e aplique um modelo moderno!'  
+Após edição, salve no banco e libere PDF só após pagamento."  
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base , se possível mostre preço normal e preço com desconto.  
+Fluxo Esp ecífico para "Cliente Faz Sozinho"  
+ 
+
+=== PÁGINA 35 ===
+ 
+4: Armazenamento e lista de currículos salvos  
+"Crie tela 'Meus Currículos Salvos' que lista todos os currículos do usuário logado (do  
+Supabase), com thumbnail do PDF, data de criação/atualização e nome (ex: 'Currículo  
+2025 - Vendas').  
+Ao clicar em um, abra editor completo para alterações. Botão 'Visualizar PDF' grátis  
+(preview), mas botão 'Baixar PDF Atualizado' ou 'Imprimir' só habilitado após 
+pagamento  Pix. 
+Adicione opção 'Renomear' e 'Excluir'."  
+Toda a seção de curríc ulo deve ter bloqueador de print, downloads,  
+compartilhamento, etc, antes d e pagamento . 
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base , se possível mostre preço normal e preço com desconto.  
+o Fluxo Específico para "Cliente Faz Sozinho"  
+ 
+ Se cliente seleciona na seção de currículo “Fazemos pra você”  
+Primeira Opção:  
+'Criar Currículo Novo'.  
+Mostre uma galeria horizontal de 5 -8 modelos de currículo  
+(simples, moderno, criativo, executivo, etc. (Procure na rede ou gere modelos 
+diferent es para cada categoria ) com preview de thumbnail (use imagens  
+placeholders ou descreva: modelo 1 coluna limpo, modelo colorido com barra lateral, 
+etc.).  
+Ao escolher um modelo,  
+abra editor com campos fáceis de preencher:  
+Dados pessoais: nome, endereço, telefone, email, LinkedIn  
+Foto: botão 'Adicionar Foto' que abre câmera ou galeria, recorta automaticamente em  
+círculo ou quadrado  
+Objetivo profissional (textarea)  
+Experiência profissional (lista adicionável: cargo, empresa, período, descrição)  
+Formação acadêm ica (lista adicionável)  
+Habilidades (chips adicionáveis)  
+Idiomas e cursos extras  
+Use formulário com autocomplete e máscaras (telefone, CEP). Botão ' Enviar Dados 
+para Fazer meu curriculo '  
+Fluxo Específico para "Fazemos pra Você"  
+ 
+Segunda opção:  
+‘Criar ou a tualizar um currículo através de um antigo’  
+Permita upload de PDF ou foto de um currículo  desatualizado (botão 'Fazer upload' ou 
+'Tirar foto').  
+Use OCR avançado (ML Kit ou biblioteca similar) para extrair automaticamente:  
+Nome, telefone, email  
+Experiências  (cargo, empresa, período)  
+
+=== PÁGINA 36 ===
+Formação  
+Habilidades , e todos os dados do curriculo.  
+Campo para cliente descrever o que vai mudar ou atualizar no curriculo antigo.  
+Permita escolher um modelo novo para aplicar.  Mostre uma galeria horizontal de 5 -8 
+modelos de cur rículo  
+(simples, moderno, criativo, executivo, etc. (Procure na rede ou gere modelos 
+diferentes para cada categoria ) com preview de thumbnail (use imagens  
+placeholders ou descreva: modelo 1 coluna limpo, modelo colorido com barra lateral, 
+etc.).  
+Envie e Mostre os dados extraídos  no  Modelo escolhido  com Campo do que vai 
+atuzliar mudar no novo curriculo,  em campos editáveis do editor de currículo (mesmo 
+do Prompt  2). Para o parceiro que aceitou e vai fazer o serviço.  
+ Fluxo Específico para "Fazemos pra Você"  
+ 
+Melhorias de usabilidade e profissionalismo  
+"No editor de currículos, adicione:  
+Sugestões automáticas de frases para objetivo e experiências (baseado no cargo  
+informado)  
+Verificação de erros (ex: email inválido, telefone incompleto)  
+Opção de exportar em Word (.docx) além de PDF  
+Escolha de fonte e cores limitadas por modelo  
+Na tela de preview PDF, mostre versão profissional em alta resolução com foto bem  
+posicionada."  Na preview bloquei para print e coloque marca d’agua. Só libere para downloads, 
+compartil har após pagamento.  
+ 
+Versões múltiplas e A/B de currículo  
+"Permita que o usuário crie múltiplas versões do mesmo currículo base (ex: 'Versão  
+Vendas', 'Versão Administrativo', 'Versão Técnica').  
+No editor, botão 'Criar Nova Versão' que duplica o currículo a tual. 
+Mostre lista de versões com preview thumbnail.  
+ 
+Envio automático de currículo por e -mail/WhatsApp  
+"No editor de currículo, após gerar o PDF final, adicione opções de envio:  
+'Enviar por E -mail' (abre composer com PDF anexado, assunto e corpo sugerido:  
+'Candidatura - [Cargo] na [Empresa]')  – Permita que o cliente envia para até 3 endereços 
+de email diferente.  
+'Enviar por WhatsApp' (abre WhatsApp com PDF anexado e mensagem pronta)  
+'Salvar no Google Drive/Dropbox' (se possível via integração básica)  
+Se cl iente optar por enviar o curriculo por email ou whats usando o app após clicar em 
+enviar ou por email ou por whats, use fluxo de pagamento, antes de abrir pagina de 
+enviar. Após pagamento liberar para cliente enviar o curriculo pela opção que pagou.  
+ 
+Fluxo  Específico para "Cliente Faz Sozinho"  
+ 
+Botão de importação LinkedIn na seção Currículos  
+"Na tela inicial da seção 'Currículos' e no editor de currículo (novo ou atualização), 
+adicione  um botão grande e destacado 'Importar do LinkedIn' com ícone do LinkedI n. 
+Ao clicar, mostre duas opções:  
+'Login com LinkedIn' (usando OAuth – integre LinkedIn Login SDK)  
+
+=== PÁGINA 37 ===
+'Colar URL do perfil público' (para quem não quer logar)  
+Adicione texto: 'Importe automaticamente experiências, formação, foto e dados do seu  
+perfil LinkedIn  para criar ou atualizar o currículo em segundos!'"  
+ 
+Prompt 2: Login com LinkedIn e importação de dados (melhor  
+experiência)  
+"Implemente login com LinkedIn usando o oficial LinkedIn OAuth (SDK para React 
+Native).  
+Solicite permissões básicas: profile, email , openid.  
+Após login bem -sucedido:  
+Extraia automaticamente: nome completo, foto de perfil (download e aplique no  
+currículo), headline (objetivo), experiências profissionais (cargo, empresa, período,  
+descrição), formação acadêmica, habilidades.  
+Preencha os campos do editor de currículo com esses dados.  
+Permita edição manual após importação.  
+Salve a foto baixada localmente para uso no PDF.  
+Se erro de login, mostre mensagem amigável: 'Tente colar a URL do seu perfil 
+público'."  
+ 
+Prompt 3: Importação via URL púb lica (fallback sem login)  
+"Adicione opção 'Colar URL do LinkedIn'. Peça ao usuário para colar a URL do perfil  
+público (ex: linkedin.com/in/nome).  
+Abra WebView oculto carregando essa URL, use scraping simples (ou biblioteca como  
+cheerio se disponível) para extrair:  
+Nome, headline, foto (URL da imagem)  
+Seções 'Experiência' e 'Formação' (título, empresa/instituição, período)  
+Preencha automaticamente os campos do editor de currículo com os dados extraídos.  
+Baixe a foto de perfil e aplique.  
+Se não conseguir extr air tudo, mostre mensagem: 'Alguns dados não foram encontrados.  
+Complete manualmente ou faça login com LinkedIn para mais precisão.'"  
+ 
+Prompt 4: Sincronização e atualização futura  
+"No editor de currículo, após importação do LinkedIn (por login ou URL), adi cione 
+botão  
+'Atualizar do LinkedIn' que repete o processo de importação para trazer novas 
+experiências  ou mudanças.  
+Se o usuário estiver logado via LinkedIn, salve o token (com expiração) para 
+atualizações  futuras.  
+Na lista 'Meus Currículos Salvos', adicio ne badge 'Sincronizado com LinkedIn' nos  
+currículos que foram importados, com data da última sincronização."  
+ 
+Prompt 5: Geração de PDF otimizado para LinkedIn  
+"Após importação ou edição, ao gerar o PDF do currículo, adicione opção extra no 
+fluxo de  pagamen to: 
+'Currícu lo Otimizado para LinkedIn – “Preço”  que gera duas versões:  
+1. PDF clássico (para impressão)  
+2. Versão texto simples otimizada (com palavras -chave, formatação ATS -friendly)  
+para upload no LinkedIn como 'Currículo em destaque'  
+Inclua dicas no ap p: 'Use esta versão para melhorar sua visibilidade em buscas de  
+recrutadores no LinkedIn'."  
+
+=== PÁGINA 38 ===
+ 
+Prompt 6: Monetização e fluxo completo  
+"Integre o importação LinkedIn no fluxo de pagamento existente:  
+Importação é gratuita (para atrair usuário)  
+Mas geração/baix a do PDF final (com dados importados) só após pagamento ( Preço ) 
+'Mais de 90% das vagas usam LinkedIn. Tenha um currículo atualizado e  
+profissional!'"  
+ 
+Prompt 1: Seção principal de Contratos Imobiliários  
+"Adicione uma nova seção no menu de Serviços chamada 'Contratos Imobiliários' com  
+ícone de casa ou documento.  com 2 opções  FAÇA VOCÊ MESMO FACILITAMOS 
+PRA VOCÊ ou FAZEMOS PRA VOCÊ  
+ 
+Mostre opções grandes:  
+Contrato de Locação de Imóvel (Aluguel)  
+Contrato de Compra e Venda de Imóvel  
+Recibo de Pagamento de Alugu el 
+Autorização para Vistoria  
+Atualizar Meu Contrato  
+Adicione texto: 'Gere contratos imobiliários padrão com cláusulas legais. Preencha os  
+dados e ba ixe PDF pronto para assinatura’.  
+ 
+Se cliente selecionar “Fazer Você mesmo”  
+Prompt 2: Contrato de Locação de Imóvel (o mais vendido!)  
+"Crie tela 'Contrato de Locação de Imóvel'.  
+Mostre formulário guiado com campos obrigatórios:  
+Dados do locador (proprietário): nome, CPF/CNPJ, RG, endereço, estado civil  
+Dados do locatário (inquilino): mesmo que acima  
+Dados do imóv el: endereço completo, matrícula, descrição (casa/apto, quartos, vagas)  
+Valor do aluguel, data de vencimento, reajuste anual (IGPM ou IPCA)  
+Prazo do contrato (ex: 30 meses), data início/fim  
+Garantias (fiador, seguro -fiança, caução – com subcampos)  
+Cláusula s opcionais (animais, pintura, benfeitorias)  
+Use modelos padrão baseados na Lei do Inquilinato (12.112/2009) com cláusulas  
+essenciais (obrigações, rescisão, multa, vistoria).  
+Gere PDF profissional com espaços para assinatura de locador, locatário, fiador ( se 
+houver) e duas testemunhas.  
+Opções de pagamento:  
+Só PDF digital – (Preço)  
+PDF + Impressã o 2 vias – (Preço)  
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base , se possível mostre preço normal e preço com desconto.  
+Fluxo Específ ico para "Cliente Faz Sozinho"  
+ 
+Se cliente selecionar “Fazer Você mesmo”  
+Prompt 3: Contrato de Compra e Venda de Imóvel  
+"Adicione tela 'Contrato de Compra e Venda de Imóvel'.  
+Formulário guiado com campos:  
+
+=== PÁGINA 39 ===
+Dados do vendedor: nome, CPF/CNPJ, RG, estado civil , endereço  
+Dados do comprador: mesmo que acima  
+Dados do imóvel: endereço completo, matrícula no cartório, área, descrição detalhada  
+Valor total da venda, forma de pagamento (à vista, financiado, parcelado – com sinal e  
+parcelas)  
+Data da escritura definitiv a (Opcional)  
+Cláusulas sobre posse, impostos (ITBI, laudêmio), benfeitorias, evicção  
+Baseie no modelo padrão do Código Civil e leis imobiliárias, com cláusulas de rescisão,  
+multa e condições suspensivas.  
+Gere PDF com espaços para assinaturas de vendedor, c omprador e testemunhas.  
+Opções:  
+Só PDF digital – R$ (de acordo  com Tabela de preços  e serviço painel adm)  
+PDF + Impressã o 2 vias – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base , se possível mostre preço normal e preço com desconto.  
+Fluxo Específico para "Cliente Faz Sozi nho"  
+ 
+Se cliente selecionar “Fazer Você mesmo”  
+Prompt 4: Recibo de Aluguel e Vistoria (complementares de alta  
+saída)  
+"Crie telas complementares:  
+'Recibo de Pagamento de Aluguel': campos simples (locador, locatário, mês/ano, valor,  
+data pagamento). Gere PDF  com canhoto destacável.  
+'Laudo de Vistoria': checklist de cômodos e itens (pintura, piso, eletrodomésticos), com  
+espaço para fotos upload (câmera/galeria) e descrição de estado.  
+Preço: R$ (de acordo  com Tabela de preços  e serviço painel adm)  só PDF recibo; R$ (de 
+acordo  com Tabela de preços  e serviço painel adm) vistoria com fotos e impressão."  
+ Mostre e apl ique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base , se possível mostre preço normal e preço com desconto.  
+Fluxo Específico para "Cliente Faz Sozinho"  
+ 
+Prompt 5: Diferencial com OCR e preenchimento automático  
+"Em todas as telas de contratos i mobiliários, adicione botão flutuante 'Extrair Dados de  
+Documento'.  
+Permita tirar foto de RG/CPF/CNPJ ou contrato antigo para OCR automático de:  
+Nome, CPF/CNPJ, RG, endereço  
+Dados do imóvel (se visíveis)  
+Preencha os campos do formulário automaticamente par a locador/locatário.  
+Texto: 'Envie foto do RG ou contrato antigo e nós preenchemos os dados por você!'"  
+ 
+Adicione banner: 'Contrato gerado por advogados especialistas? Não precisa! Nossos  
+modelos são padrão e aceitos em cartórios.'  
+Integre fluxo de pagamen to Pix e envio para impressão na loja/parceiro mais 
+próximo."  
+ 
+
+=== PÁGINA 40 ===
+Armazenamento e lista de Contratos  salvos  - Se cliente selecionar “Fazer Você 
+mesmo”  
+ 
+"Crie tela 'Meus Contratos Salvo ' que lista todos os c ontratos  do usuário logado (do  
+Supabase), com thumbna il do PDF, data de criação/atualização e nome (ex: 'C ontrato 
+de Locação Casa '). 
+Ao clicar em um, abra editor completo para alterações. Botão 'Visualizar PDF' grátis  
+(preview), mas botão 'Baixar PDF Atualizado' ou 'Imprimir' só habilitado após 
+pagamento  Pix. 
+Só PDF digital – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+PDF + Impressã o 2 vias – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+Adicione opção 'Renomear' e 'Excluir'."  
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base , se possível mostre preço normal e preço com desconto.  
+Fluxo Específico para "Client e Faz Sozinho"  
+ 
+Toda a seção de contrato deve ter bloqueador de print, downloads, 
+compartilhamento, etc, antes de pagamento.  
+ 
+ Contrato de Locação de Imóvel (Aluguel) - Cliente selecionar “Fazemos pra 
+você” na seção de contratos de locação imobiliários.  
+Mostre formulário guiado com campos obrigatórios:  
+Dados do locador (proprietário): nome, CPF/CNPJ, RG, endereço, estado civil  
+Dados do locatário (inquilino): mesmo que acima  
+Dados do imóvel: endereço completo, matrícula, descrição (casa/apto, quartos, vagas)  
+Valor do aluguel, data de vencimento, reajuste anual (IGPM ou IPCA)  
+Prazo do contrato (ex: 30 meses), data início/fim  
+Garantias (fiador, seguro -fiança, caução – com subcampos)  
+Cláusulas opcionais (animais, pintura, benfeitorias) . 
+Botão para Cliente fazer u ploads de contrato antigo para extrair informações.  
+Opções de pagamento:  
+Só PDF digital – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+PDF + Impressã o 2 vias – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+ 
+Envie todos os dados para Parceiro que aceitou fazer o serviço.  
+Fluxo Específico para "Fazemos pra Você"  
+ 
+ 
+ Contrato de Compra e Ve nda de Imóvel  
+ Cliente selecionar “Fazemos pra você” na seção de contratos de locação 
+imobiliários.  
+Formulário guiado com campos:  
+Dados do vendedor: nome, CPF/CNPJ, RG, estado civil, endereço  
+Dados do comprador: mesmo que acima  
+
+=== PÁGINA 41 ===
+Dados do imóvel: endereço com pleto, matrícula no cartório, área, descrição detalhada  
+Valor total da venda, forma de pagamento (à vista, financiado, parcelado – com sinal e  
+parcelas)  
+Data da escritura definitiva  (Opcional)  
+Cláusulas sobre posse, impostos (ITBI, laudêmio), benfeitorias,  evicção  
+Baseie no modelo padrão do Código Civil e leis imobiliárias, com cláusulas de rescisão,  
+multa e condições suspensivas.  
+Botão para Cliente fazer uploads de contrato antigo para extrair informações.  
+Opções:  
+Só PDF digital – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+PDF + Impressã o 2 vias – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+ 
+Envie todos os dados para Parceiro que aceitou fazer o serviço.  
+ 
+Fluxo Específico para "Fazemos pra Você"  
+ 
+ Recibo de Aluguel e Vistoria  
+ Cliente selecionar “Fazemos pra você” na seção de contratos de locação 
+imobiliários.  
+ 
+campos simples (locador , locatário, mês/ano, valor,  
+data pagamen to). 
+'Laudo de Vistoria': checklist de cômodos e itens (pintura, piso, eletrodomésticos), com  
+espaço para fotos upload (câmera/galeria  cliente pode fazer uploads de fotos ) e 
+descrição de estado.  
+Preço: R$ (de acordo  com Tabela de preços  e serviço painel adm)  só PDF r ecibo; R$  (de 
+acordo  com Tabela de preços  e serviço painel adm) vistoria com fotos e impressão."  
+Fluxo Específico para "Fazemos pra Você"  
+ 
+ 
+Atualizar contrato salvo - Se cliente selecionar “Fazemos pra Você”  
+ 
+Cliente seleciona contrato salvo (pode ver antes de enviar)  
+Campo com modificações a serem feitas ( preenchida pelo cliente) . 
+Após pagamento envia contrato e todos os dados para alteração para prestador 
+que aceitou fazer o serviço.  
+Só PDF digital – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+PDF + Impressã o 2 vias – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+ 
+Fluxo Específico para "Fazemos pra Você"  
+ 
+ 
+Prompt 1: Seção principal de  Contratos de Prestação de Serviço . Com 2 opções  
+FAÇA VOCÊ MESMO FACILITAMOS PRA VOCÊ ou FAZEMOS PRA VOCÊ  
+ 
+"Adicione uma nova seção no menu de Serviços chamada 'Contratos de Prestação de  
+
+=== PÁGINA 42 ===
+Serviço' com ícone de ferramenta ou handshake.  
+Mostre opções grandes:  
+Contrato de Prestação de Serviço Geral (autônomo)  
+Contrato para Diarista / Faxineira  
+Contrato para Reforma / Pedreiro / Pintor  
+Contrato para Mecânico / Oficina  
+Recibo de Pagamento de Serviço  
+Adicione texto: 'Gere contratos de serviço profissionais e legai s. Modelos padrão com  
+cláusulas essenciais. Preencha os dados e baixe PDF pronto para assinatura e  
+reconhecimento de firma se necessário.'"  
+ 
+Prompt 2: Contrato Geral de Prestação de Serviço (o mais versátil)  Cliente 
+selecionou “faça você mesmo”  
+ 
+"Crie tela  'Contrato de Prestação de Serviço Geral'.  
+Formulário guiado com campos:  
+Dados do prestador: nome, CPF/CNPJ, RG, endereço, profissão/área  
+Dados do tomador/cliente: nome, CPF/CNPJ, RG, endereço  
+Descrição detalhada do serviço (escopo, o que será feito)  
+Valor  total ou por hora/diária, forma de pagamento (parcelas, sinal, à vista)  
+Prazo de execução (início e término)  
+Cláusulas opcionais (multa por atraso, materiais inclusos, garantia, rescisão)  
+Baseie no modelo padrão do Código Civil com cláusulas essenciais (o brigações das  
+partes, responsabilidade, confidencialidade básica).  
+Gere PDF profissional com espaços para assinatura do prestador, tomador e duas  
+testemunhas.  
+Opções de pagamento:  
+Só PDF digital – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+PDF + Impressão  2 vias – R$(de acordo  com Tabela de preços  e serviço painel adm)     
+ Mostre e aplique: Inc entivo "Cliente Faz Sozinho": 
+desconto 20% no preço base, se possível mostre preço 
+normal e preço com desconto.  
+Fluxo Específico para "Cliente Faz Sozinho"  
+ 
+ 
+Prompt 3: Contrato específico para Diarista / Faxineira (alta  
+demanda)  Cliente selecionou “faça vo cê mesmo”  
+ 
+"Adicione tela 'Contrato para Diarista ou Faxineira'.  
+Campos específicos:  
+Dados da diarista e do contratante  
+Frequência (semanal, quinzenal, mensal)  
+Dia(s) da semana e horário  
+Valor por diária ou mensal  
+Tarefas incluídas (limpeza geral, passar r oupa, etc.)  
+Materiais (fornecidos por quem)  
+Cláusulas sobre transporte, alimentação, aviso prévio  
+Use modelo simples e claro, com opção de contrato por período determinado ou  
+indeterminado.  
+Gere PDF com espaço para assinaturas.  
+
+=== PÁGINA 43 ===
+Preço: R$  (de acordo  com Tabela de preços  e serviço painel adm)  só PDF; R$ (de 
+acordo  com Tabela de preços  e serviço painel adm)  com impressão 2 vias."     
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base, se possível mostre preço normal e preço com desconto.              
+Fluxo Específico para "Cliente Faz Sozinho"  
+ 
+ 
+Prompt 4: Contrato para Reforma / Pedreir o / Pintor / Serviços  
+Técnicos  - Cliente selecionou “faça você mesmo”  
+ 
+"Crie tela 'Contrato para Reforma ou Serviço Técnico'.  
+Campos:  
+Dados das partes  
+Descrição detalhada da obra/serviço (etapas, materiais inclusos ou não)  
+Orçamento detalhado (pode adicion ar linhas de itens com valor unitário)  
+Cronograma de execução  
+Garantia do serviço (prazo)  
+Multa por atraso ou desistência  
+Forma de pagamento (sinal, parcelas por etapa)  
+Gere PDF com anexo possível para orç amento detalhado e espaço para assinaturas.  
+Opçõ es: R$(de acordo  com Tabela de preços  e serviço painel adm)  só PDF; R$ (de 
+acordo  com Tabela de preços  e serviço painel adm)  com impressã o 2 vias "    
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base, se possível mostre preço normal e preço com desconto.  
+Fluxo Específico para "Cliente Faz Sozinho"  
+ 
+ 
+Prompt 5: Recibo de Pagamento de Serviço (complementar  
+essencial)  - Cliente selecionou “faça você mesmo”  
+ 
+"Adicione tela 'Recibo de Prestação de Serviço'.  
+Campos simples:  
+Prestador e tomador  
+Descrição resumida do serviço  
+Valor pago (por extenso e numeral)  
+Data do pagamento  
+Forma (dinheiro , Pix, transferência)  
+Gere PDF com espaço para assinaturas.  
+ Preço: R$ (de acordo  com Tabela de preços  e serviço painel adm)  só PDF; R$  
+(de acordo  com Tabela de preços  e serviço painel adm) com impressão."                                                                                 
+Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço bas e, se possível mostre preço normal e preço com desconto.  
+Fluxo Específico para "Cliente Faz Sozinho"  
+ 
+ 
+Prompt 6: Diferencial com OCR e preenchimento automático  
+"Em todas as telas de contratos de serviço, adicione botão flutuante 'Extrair Dados de  
+Documento '. 
+Permita tirar foto de RG/CPF/CNPJ ou contrato/recibo antigo para OCR automático de:  
+Nome, CPF/CNPJ, endereço, telefone  
+
+=== PÁGINA 44 ===
+Preencha automaticamente os campos do prestador ou tomador.  
+Texto: 'Fotografe o RG ou contrato antigo e nós preenchemos os dados por v ocê!'"  
+ 
+ Na Seção de Contratos de Prestação de Serviço se cliente selecionar “Fazemos 
+pra você”, colha todas as informações necessários de acordo co m cada contrato, 
+após pagamento , envie todas as informações e documento caso haja, para 
+parceiro que aceitou fazer o serviço.  
+ Fluxo Específico para "Fazemos pra Você"  
+ 
+1. Opção Orçamento na Seção  / Com 2 opções  FAÇA VOCÊ MESMO 
+FACILITAMOS PRA VOCÊ ou FAZEMOS PRA VOCÊ  
+ 
+Cliente selecionou “faça você mesmo”  
+"Na seção 'Contratos de Prestação de Serviço', adicione op ção grande 'Orçamento  
+Profissional' com ícone de calculadora. Texto: 'Gere orçamentos detalhados e 
+profissionais  para qualquer serviço'."  
+2. Tela de Escolha de Modelo de Orçamento  
+"Crie tela 'Novo Orçamento'. Mostre galeria horizontal de 6 modelos:  
+Geral/S imples  
+Reforma e Construção  
+Manutenção e Reparos  
+Limpeza e Diarista  
+Eventos e Buffet  
+Freelancer/TI/Consultoria  
+Ao escolher modelo, abra editor."  
+3. Editor de Orçamento  
+"Crie editor com campos:  
+Dados do prestador: nome/empresa, CPF/CNPJ, telefone, e -mail, e ndereço (OCR  
+automático de foto se quiser)  
+Dados do cliente: nome, CPF/CNPJ, telefone, endereço  
+Descrição do serviço (textarea grande)  
+Itens detalhados: lista adicionável (descrição item, quantidade, unidade, valor unitário,  
+subtotal automático)  
+Descontos e acréscimos (campo % ou valor)  
+Forma de pagamento e prazo  
+Validade do orçamento (dias)  
+Observações/condições  
+Botão 'Visualizar PDF'."  
+4. Geração e Preview do Orçamento  
+"Gere PDF profissional com:  
+Cabeçalho com logo (placeholder ou upload simples)  
+Número s equencial do orçamento  
+Tabela de itens com totais  
+Valor total por extenso  
+Espaços para assinaturas (prestador e cliente)  
+Mostre preview com marca d'água 'Copinet Serviços Digitais - Pagamento Pendente'  
+se não pago."  
+ 
+5. Preço e Pagamento do Orçamento  
+
+=== PÁGINA 45 ===
+"Calc ule preço:  
+Básico (até  10 itens): R$ (de acordo  com Tabela de preços  e serviço painel adm)  só PDF  
+Impressã o 2 vias: +R$ (de acordo  com Tabela de preços  e serviço painel adm)  por folha  
+Envio por WhatsApp/E -mail automá tico disponivel  
+Após pagamento Pix, libere PDF limpo sem marca d'água e opção de impressão  
+na loja/parceiro."  
+ Mostre e aplique: Incentivo " Cliente Faz Sozinho": desconto 20% no 
+preço base, se possível mostre preço normal e preço com desconto.  
+o Fluxo Específico para "Cliente Faz Sozinho"  
+ 
+ 
+ Em “Orçamento Profissional” se cliente selecionar “Fazemos pra você”, colha 
+todas as informações necessári os de acordo com ca da contrato, após pagamento , 
+envie todas as informações e documento caso haja, para parceiro que aceitou 
+fazer o serviço.  
+ Fluxo Específico para "Fazemos pra Você"  
+ 
+7. Integração com Contrato  
+"No final do editor de orçamento, adicione bo tão 'Transformar em Contrato de 
+Prestação  de Serviço'. Copie todos os dados preenchidos para a tela de contrato 
+correspondente  
+(geral ou específico)."  Cobre o preço do contrato escolhido.  
+8. Banner na Tela  
+"Banner superior fixo: 'Orçamento profissional ace ito por clientes e empresas. Use 
+como  base para fechar serviços'."  
+ 
+Prompt 3: Declaração simples (residência, união estável, etc.)  Com 2 opções  FAÇA 
+VOCÊ MESMO FACILITAMOS PRA VOCÊ ou FAZEMOS PRA VOCÊ  
+ 
+Cliente selecionou “faça você mesmo”  
+ 
+"Adicione seção 'Declarações Simples' com modelos prontos mais usados em 
+copiadoras:  
+Declaração de Residência  
+Declaração de União Estável  
+Declaração de Hipossuficiência (para gratuidade justiça)  
+Autorização para Menor Viajar  
+Cada modelo tem formulário guiado com campos (n ome, CPF, endereço, nomes dos  
+envolvidos, testemunhas).  
+Gere documento em formato oficial com espaço para assinatura.  
+Opções:  
+Só PDF para imprimir em casa – R$(de acordo  com Tabela de preços  e serviço painel 
+adm)  
+PDF + 2 vias impressas  – R$(de acordo  com Tabela de preços  e serviço painel adm)  
+Inclua instruções: 'Imprima, assine e reconheça firma em cartóri o se necessário'."  
+ Mostre e aplique: Incentivo "Cliente Faz Sozinho": desconto 20% no 
+preço base, se possível mostre preço normal e preço com desconto.  
+o Fluxo Específico para "Cliente Faz Sozinho"  
+
+=== PÁGINA 46 ===
+ 
+ Em “Declarações Simples” se cliente selecionar “Fazemos pra  você”, colha todas 
+as informações necessários de acordo co m cada contrato, após pagamento , envie 
+todas as informações e documento caso haja, para parceiro que aceitou fazer o 
+serviço.  
+ Fluxo Específico para "Fazemos pra Você"  
+ 
+ 
+Seção Trabalhos Escolares  
+"Adicione seção 'Trabalhos Escolares' no menu principal com ícone de livro.  
+Opções:  
+Educação Infantil, Ensino Fundamental, Ensino Médio, Universitário."  
+ 
+Tela de Pedido de Trabalho  
+"Crie tela única 'Novo Trabalho Escolar' acessível de qualquer nível.  
+Camp os: 
+Nível (Educação Infantil / Fundamental / Médio / Universitário)  
+ 
+Tema ou título do trabalho (campo texto grande)  
+Normas ABNT? (sim/não)  
+Quantidade aproximada de páginas (slider 3 a 30)  
+Outras instruções (textarea opcional)  
+Botão 'Gerar Visualização'."  
+ 
+Geração do Trabalho com IA  
+"Ao clicar 'Gerar Visualização', envie prompt para IA (use Grok ou modelo integrado):  
+'Tema: [tema]. Nível: [nível]. [Com normas ABNT]. Aproximadamente [páginas] 
+páginas.  
+Estrutura completa com capa, introdução, desenvolvimento,  conclusão e referências.'  
+Gere texto completo em Markdown."  
+ 
+Visualização com Marca d'Água  
+"Mostre preview do trabalho em tela full -screen com PDF gerado do Markdown. 
+Aplique  
+marca d'água gr ande e repetida 'Copinet Serviços Digitais - Pagamento Pendente' em 
+diagonal.  
+Desabilite screenshot (use flag secure no Android/iOS se possível) e botões de  
+download/share. Apenas botão 'Pagar e Baixar' na parte inferior."  
+5. Cálculo de Preço e Pagamento  
+"Calcule preço automático:  
+Infantil/Fundamental: R$ (de acordo  com Tabela de preços  e serviço painel adm)  por 
+página  
+Médio: R$ (de acordo  com Tabela de preços  e serviço painel adm)  por página  
+Universitá rio com ABNT: R$4  por página  
+Opções finais:  
+Só PDF digital  (valor por pagina)  
+PDF + Impressão P&B  (mais R$ (de acordo  com Tabela de preços  e serviço painel adm)  
+por pagina fora o valor já do pdf)  
+PDF + Impressão  Colorida( (de acordo  com Tabela de preços  e serviço painel adm) por 
+pagina fo ra o valor do pdf)  
+
+=== PÁGINA 47 ===
+Após confirmação, libere download PDF limpo (sem marca  
+d'água) e/ou envie para impressão."  
+Fluxo Unico  "Cliente Faz Sozinho"  
+ 
+ 
+Histórico de Trabalhos  
+"Crie tela 'Meus Trabalhos' no perfil. Liste trabalhos anteriores do usuário com 
+thumbnail  borrado ou com marca d'água. Botã o 'Pagar e Baixar Novamente' se não pago 
+antes."  
+ 
+Proteção Extra  
+"No preview PDF, desabilite seleção de texto, zoom excessivo e impressão. Mostre  
+contador 'Pagamento necessário para versão final sem marca d'água'."  
+ 
+Banner Ético  
+"Em todas as telas da seção , banner fixo superior: 'Serviço de apoio escolar. O conteúdo  
+gerado é para estudo e referência. Não incentiva plágio.'"  
+ 
+Opção TCC na seção Trabalhos  
+"Na seção 'Trabalhos Escolares', adicione opção grande 'TCC Universitário' com ícone 
+de formatura. Texto:  'Gere TCC completo com ABNT, capa, resumo, capítulos, 
+referências e  anexos'."  
+ 
+2. Tela de Pedido TCC  
+"Crie tela 'Novo TCC'. Campos:  
+Tema ou título completo  
+Área do curso (ex: Administração, Direito, Engenharia)  
+Quantidade de páginas (slider 30 a 100)  
+Norm as ABNT obrigatórias (ativado por default)  
+Instruções extras (metodologia, fontes específicas, textarea)  
+Botão 'Gerar Visualização'."  
+3. Geração do TCC com IA  
+"Ao clicar 'Gerar Visualização', envie prompt IA:  
+'TCC universitário completo sobre [tema]. Área:  [curso]. Estrutura ABNT: capa, folha 
+de rosto, resumo, abstract, sumário, introdução, referências teóricas, metodologia,  
+desenvolvimento, conclusão, referências bibliográficas e anexos. Aproximadamente  
+[páginas] páginas. Conteúdo acadêmico original e bem fundamentado.'  
+Gere texto completo em Markdown com formatação ABNT."  
+4. Visualização com Marca d'Água  
+"Mostre preview PDF do TCC full -screen. Aplique marca d'á gua grande repetida 
+'Copinet Serviços Digitais  - Pagamento Pendente'. Desabilite screenshot, down load, 
+share e seleção de  
+texto. Botão fixo inferior 'Pagar e Baixar Versão Final'."  
+ 
+5. Cálculo de Preço TCC  
+"Calcule preço automá tico: R$  (de acordo  com Tabela de preços  e serviço painel 
+adm) por página (mínimo 30 pá ginas).  
+Opções: Só PDF digital / PDF + Impressão P&B / PDF + Impressão colorida capa.  
+Integre pagamento Pix. Após pago, libere PDF limpo sem marca d'água e envie para  
+
+=== PÁGINA 48 ===
+impressão se escolhido."  
+ 
+Fluxo unico  "Cliente Faz Sozinho"  
+ 
+ 
+7. Histórico e Reutilização TCC  
+"Na tela 'Meus Trabalhos', liste TCCs anteriores com preview borrado. Botão 'Editar e 
+Gerar Nova Versão' (mantém tema, permite ajustes). Liberação só após novo pagamento  
+se alterado."  
+8. Banner Ético TCC  
+"Em todas as telas TCC, banner fixo: 'Serviço de apoio acadêmico para estrutura e  
+pesquisa. Conteúdo gerado deve ser usado como base par a seu trabalho original. Não  
+incentiva plágio.'"  
+ 
+Prompt para upload e impressão de arquivos  
+"Crie uma tela de 'Impressão Rápida' Na pagina inicial,  onde o usuário faz upload de 
+PDF / Word (se contagem de pagina não for exata – considerar fazer a conversã o para 
+pdf no momento do uploads)  (Permitir uploads de mais de um arquivo) ou imagens do  
+dispositivo, escolhe opções como  (para cada arquivos separado se uploads m ais de um) : 
+preto&bra nco ou colorido, quantidade de copias , Tipo Papel Comum A4  / Pap el Cartão 
+/ Papel Fotografico , Se documento com mais de 1 folhas app deve deixar opção para 
+quais paginas cliente quer imprimir, Caixa de texto disponível para Mensagem curta do 
+cliente com orientação sobre a impressão (ex. arquivo com senha tal). App deve  mostra 
+quantidade de folha do documento que fez uploads e calcula preço automá tico (R$1,0 0 
+por página P&B), (R$1,50 por pagina  colorida  (papel comum) . (de acordo  com Tabela 
+de preços  e serviço painel adm)  – Permita Previa dos documentos que serão impress os. 
+ Mostre mapa de parceiros com impressora  próximos (raio de 5 a 15 km – Use 
+geolocalização) : cliente seleciona um  e aguarda parceiro que ele escolheu 
+confirmar que vai imprimir.  Mostre ao cliente tela de espera: 'Aguardando 
+aceite da impressão... Tempo estimado: 5 - min. Você será notificado quando 
+aceito.'  
+ Se parceiro recusa ou time out (5 min): Atualize mapa agora sem a opção do 
+parceiro que recusou ou não respondeu em até 5 min. E Mostre novamente ao 
+cliente para que escolha outro parceiro, “desculpe pelo inconveniente, escolha 
+outro parceiro para retirar sua impressão” reenviar par a o parceiro selecionado.  
+ (Se nenhum da lista de disponível no raio de 5 a 15 km responder, notificar 
+cliente que impressão não está disponível no momento e reembolso  automático  
+em caso de já te pago . 
+ Se impressão aceita - Gere QR code automático com: número do pedido, horário 
+estimado de pronto (considerando fila), nome/endereço do parceiro.  
+ Registre aceitações/recusas n o ranking do parceiro (penalize recusa frequente).  
+ Obs: se no momento de escolher parceiro não tiver parceiro online (Ex: finais de 
+semana, fora do horário de funcionamento, etc), mostra na opção de escolher 
+aviso “Impressão indisponível no mento, nenhum p arceiro disponível”  
+Fluxo único  "Cliente Faz Sozinho"  
+ 
+
+=== PÁGINA 49 ===
+ Adicione integração de sharing intent no app para receber arquivos de  outros 
+apps (WhatsApp, email, galeria, etc.) e direcionar diretamente para seção de 
+impressão rápida.  
+ 
+Fluxo:  
+- Quando usuário compartilha arquivo (PDF, imagem, texto) de outro app para Copinet: 
+abra tela 'Impressão Rápida' com o arquivo recebido pré -anex ado (mostre 
+thumbnail/preview).  
+- Após anexar na seção “Impressão Rapida” Segue fluxo de impressão rápida.  
+- Suporte múltiplos arquivos compartilhados de uma vez (ex: pasta do WhatsApp).  
+- Texto inicial: 'Arquivo recebido! Vamos imprimir ou gerar PDF rapid amente'.  
+ 
+ 
+ 
+ 
+Prompt para upload e impressão de fotografias  
+ 
+"Crie uma tela de 'Impressã o de Fotos ' Na pagina inicial,  onde o usuário faz upload de 
+PDF (Permitir uploads de mais de um arquivo) ou imagens do  dispositivo, escolhe 
+opções como : 
+Tamanho de foto  (10x15 – 13x18 – 15x21 ou 21x29, quantidade de copias , Papel  
+fotográfico , App deve mostra quantidade de folha do documento se pdf que fez uploads 
+e calcula preço automá tico. Preço foto Tam. 10x15 R$3,00  (por foto)  – Tam. 13x18 
+R$5,00 (Por foto) – Tam.  15x21 R$7,00 (por foto) – Tam. 21x29 R$9,00  (por foto)  (de 
+acordo  com Tabela de preços  e serviço painel adm)  
+ Mostre mapa de parceiros com impressora  próximos (raio de 5 a 15 km – Use 
+geolocalização) : cliente seleciona um  e aguarda parceiro que ele escolheu 
+confirmar que vai imprimir.  Mostre ao cliente tela de espera: 'Aguardando 
+aceite da impressão... Tempo estimado: 5 - min. Você será notificado quando 
+aceito.'  
+ Se parceiro recusa ou time out (5 min): Atualize mapa agora sem a opção do 
+parceiro que recusou ou não respondeu em até 5 min. E Mostre novamente ao 
+cliente para que escolha outro parceiro, “desculpe pelo inconveniente, escolha 
+outro parceiro para retirar sua impressão” reenviar par a o parceiro selecionado.  
+ (Se nenhum da lista de disponível no raio de 5 a 15 km responder, notificar 
+cliente que impressão não está disponível no momento e reembolso  automático  
+em caso de já te pago . 
+ Se impressão aceita - Gere QR code automático com: número do pedido, horário 
+estimado de pronto (considerando fila), nome/endereço do parceiro.  
+ Registre aceitações/recusas n o ranking do parceiro (penalize recusa frequente).  
+ Obs: se no momento de escolher parceiro não tiver parceiro online (Ex: finais de 
+semana, fora do horário de funcionamento, etc), mostra na opção de escolher 
+aviso “Impressão indisponível no mento, nenhum p arceiro disponível”  
+ 
+Fluxo Único "Cliente Faz Sozinho"  
+ 
+ 
+Prompt para foto 3x4 e edição  
+
+=== PÁGINA 50 ===
+"Adicione uma feature de 'Foto 3x4 para Documentos': permita tirar selfie com câ mera 
+(permita opção de tirar mais de uma foto, e selecion ar qual quer)  
+edite automaticamente para fundo branco , permita que cliente manusei, der zoo, 
+centralize, etc , tamanho padrão 3x4cm, rosto centralizado e  
+boa iluminação. Gere JPG  pronto para download ou impressão em papel fotográfico."  
+Com 6 fotos papel  tamanho 10x15.  
+Opção de preço só PDF/JPG R$5,00 / Impressão folha inteira sem corte R$8,00 / 
+PDF/JPG + impressão corte 6 fotos 3x4 R$14,00 (de acordo  com Tabela de preços  e 
+serviço painel adm)  
+Fluxo Unico  "Cliente Faz Sozinho"  
+ 
+ 
+Escaneamento e geração de PDF de múltiplos  
+Documentos . 
+"Crie seção 'Escanear Doc umentos para PDF'.  Na primeira pagina  
+Permita  que cliente selecione “Um pdf por documento (Cada Documento será em um 
+arquivo separado) ” ou “Documentos em pdf único  (todos os documentos ficaram em 
+um único arquivo) ” 
+Permita:  
+Tirar várias fotos seguidas (modo contínuo) ou upload múltiplo da galeria.  
+Edição automática por página: corte bordas, correção de perspectiva, melhora  
+contraste (preto e branco perfeito para documentos).  Permita  manipula ção de paginas 
+organizaçã o (ex. mudar posição d a primeira  pagina pra segunda, a terceira pra primeiro, 
+etc) Reordene páginas com drag -and-drop.  
+Permita Previa do documento escaneado (com proteção antes do pagamento)  
+Gere PDF único ou separado de acordo com escolha do cliente, de alta qualidade.  
+Opções:  
+Só PDF digital – R$0,50 por documento  (de acordo  com Tabela de preços  e serviço 
+painel adm)  
+ 
+PDF + Impressão – preço por página (P&B ou colorido)  
+Enviar por e -mail ou WhatsApp diretamente do app após pagamento.  
+Fluxo Unico  "Cliente Faz Sozinho"  
+ 
+ 
+ 
+ Adicione seção 'Envio de  Email Simples' no menu principal com ícone de 
+envelope. Texto: 'Envie emails facilmente sem usar o Gmail. Ideal para quem 
+tem dificuldade com tecnologia'.  
+ 
+Fluxo da tela:  
+- Campo 'Para' (e -mail destinatário, máscara email).  
+- Campo 'Assunto' (texto simple s). 
+- Campo 'Mensagem' (textarea grande, teclado simples).  
+- Botão 'Anexar Arquivos' (abre câmera/galeria/arquivos do dispositivo, múltiplo upload 
+até 5 arquivos; mostre thumbnails com nome e botão remover; foco em interação fácil 
+com grandes botões).  
+
+=== PÁGINA 51 ===
+- Opções de resposta: checkboxes 'Receber resposta no meu email', 'No app via 
+notificação', 'Em ambos', 'No meu WhatsApp' (campo para número WhatsApp se 
+marcado).  
+- Botão 'Enviar Email' (integre com email backend ou SMTP simples, envie com 
+anexos).  
+- Após envi o: mensagem 'Email enviado! Respostas serão notificadas conforme 
+escolhido'.  
+Integre notificação push para respostas recebidas no app (se backend permitir).  
+Fluxo Unico  "Cliente Faz Sozinho"  
+ 
+ 
+Prompt 1: Seção Inscrições no Menu  
+"Adicione seção 'Inscrições'  no menu principal com ícone de formulário. Cards grandes:  
+Concurso Público  
+Sites de Emprego  
+Cursos e Vestibulinho  
+ 
+Texto: 'Fazemos a inscrição completa pra você em sites oficiais. Receba o  
+comprovante PDF pronto'."  
+Prompt 2: Tela de Escolha do Tipo de Ins crição  
+"Crie tela 'Nova Inscrição'. Mostre os 3 cards acima clicáveis. Ao escolher um:  
+Para todos: botão câmera para OCR/upload de documentos necessários (RG, CPF,  
+comprovante residência, currículo etc.).  
+Botão 'Continuar'."  
+Prompt 3: Coleta de Dados e Des crição  
+"Após escolha do tipo:  
+Campos comuns: nome completo, CPF, data nascimento, telefone, e -mail.  
+Upload múltiplo de documentos (câmera/galeria, OCR automático para extrair dados).  
+Campo textarea 'Instruções adicionais' (ex: 'Quero aplicar nessas 5 vagas  específicas',  
+'Isenção de taxa').  
+Campo opcional 'Link do edital/site da inscrição'.  
+Botão 'Solicitar Serviço '." 
+Prompt 4: Criação do Pedido e Direcionamento a Parceiros  
+ 
+"Ao confirmar:  
+Crie pedido com todos os dados, uploads e descrição.  
+Direcione automa ticamente para parceiros que marcaram 'Inscrições' no questionário  
+de cadastro.  
+Mostre ao cliente: 'Pedido enviado! Parceiros visualizarão e aceitarão em até 30 min.  
+Você será notificado.'  
+ 
+Prompt 5: Dashboard do Parceiro para Pedidos de Inscrição  
+"No dash board do parceiro:  
+Liste pedidos de 'Inscrições' com:  
+Tipo (Concurso, Emprego etc.)  
+Descrição completa do cliente  
+Valor do Pedido já descontado comissão do app (30%) ) (de acordo  com Tabela de 
+preços  e serviço painel adm)  
+Botão 'Aceitar Pedido' →  após parceiro aceitar pedido, app cobra do cliente e após 
+pagamen to, abre chat integrado com cliente para (dúvidas, mais documentos , etc).  
+
+=== PÁGINA 52 ===
+Prompt 6: Conclusão e Opção de Impressão  
+"Após parceiro concluir inscrição:  
+Upload do comprovante PDF + screenshots da confirmação.  
+App notifica cliente: 'Inscrição concluída! Compro vante pronto.'  
+Pergunte obrigatoriamente: 'Quer só PDF ou PDF + impressão física?'  
+Se impressão: mapa de parceiros com impressora ou lojas próprias → fluxo  
+combinado (mesmo ou outro parceiro imprime).  
+Libere PDF limpo + envie para impressão se solicitado."  
+ 
+ Fluxo Único "Fazemos pra você"  
+Serviços Customizados / Tela Livre  
+o Opção "Nos Cont e o Que Você Quer": campo texto livre para descrever 
+serviço não abrangido (ex: inscrição em benefícios sociais, renovação de 
+alvará).  
+o Fluxo: cliente descreve + envia dados necessários → app disponibiliza 
+para parceiros cadastrados → parceiro vê solicitaçã o completa da seu 
+orçamento (preço), prazo de entrega (se possível disponibilizar mais de 
+um orçamento ou seja mostrar solicitação de cliente pra mais de um 
+parceiro), s e cliente aceitar preço e prazo.   
+o Após ac eite de cliente : app cobra do cliente (p reço n egociado ) e faz 
+ligação via chat integrado entre cliente e parceiro para tratativas, envio de 
+documentação, informação e tudo necessário para conclusão . 
+o Pergunte sempre: "Quer só PDF/digital ou PDF + impressão?" – se 
+impressão, direcione para parceiro com impressora (mesmo ou outro 
+próximo via mapa).  
+ Fluxo Único "Fazemos pra você"  
+ 
+ 
