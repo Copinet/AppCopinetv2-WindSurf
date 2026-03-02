@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code - Expo Go</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        #qrcode {
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+            color: #333;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .url {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 15px 0;
+            word-break: break-all;
+            color: #495057;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Teste no Celular</h1>
+        <p class="subtitle">Escaneie o QR Code com o Expo Go</p>
+        
+        <div id="qrcode"></div>
+        
+        <div class="url" id="expo-url">Aguardando...</div>
+        
+        <button class="btn" onclick="copyUrl()">📋 Copiar URL</button>
+        <button class="btn" onclick="regenerateQR()">🔄 Atualizar QR Code</button>
+        
+        <div class="instructions">
+            <h3>📋 Instruções:</h3>
+            <ol>
+                <li><strong>Instale o Expo Go</strong> no celular:
+                    <br>• Android: <a href="https://play.google.com/store/apps/details?id=host.exp.exponent" target="_blank">Google Play</a>
+                    <br>• iOS: <a href="https://apps.apple.com/app/expo-go/id982107779" target="_blank">App Store</a>
+                </li>
+                <li><strong>Conecte</strong> celular e PC na <strong>mesma rede Wi-Fi</strong></li>
+                <li><strong>Abra o Expo Go</strong> no celular</li>
+                <li><strong>Escaneie</strong> o QR Code acima</li>
+                <li><strong>Aguarde</strong> o app carregar (pode demorar 1-2 minutos na primeira vez)</li>
+            </ol>
+        </div>
+        
+        <div class="status success">
+            ✅ Servidor Expo rodando na porta 8081
+        </div>
+        
+        <p class="footer">AppCopinet v2 - Teste Mobile</p>
+    </div>
+
+    <script>
+        const IP = '192.168.0.102';
+        const PORT = '8081';
+        const expoUrl = `exp://${IP}:${PORT}`;
+        
+        function generateQRCode() {
+            document.getElementById('qrcode').innerHTML = '';
+            document.getElementById('expo-url').textContent = expoUrl;
+            
+            QRCode.toCanvas(expoUrl, {
+                width: 300,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function (error, canvas) {
+                if (error) {
+                    console.error(error);
+                    document.getElementById('qrcode').innerHTML = '<p style="color: red;">Erro ao gerar QR Code</p>';
+                } else {
+                    document.getElementById('qrcode').appendChild(canvas);
+                }
+            });
+        }
+        
+        function copyUrl() {
+            navigator.clipboard.writeText(expoUrl).then(function() {
+                alert('✅ URL copiada! Cole no Expo Go se preferir.');
+            }, function(err) {
+                alert('❌ Erro ao copiar: ' + err);
+            });
+        }
+        
+        function regenerateQR() {
+            generateQRCode();
+            alert('🔄 QR Code atualizado!');
+        }
+        
+        // Gerar QR Code ao carregar a página
+        window.onload = function() {
+            generateQRCode();
+        };
+    </script>
+</body>
+</html>
