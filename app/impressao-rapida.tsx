@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Linking } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '../constants/Colors';
@@ -9,27 +9,33 @@ import { AguardandoAceite } from '../components/AguardandoAceite';
 import { TelaPagamento } from '../components/TelaPagamento';
 import { QRCodeRetirada } from '../components/QRCodeRetirada';
 import { PreviewDocumento } from '../components/PreviewDocumento';
+import { countPagesViaServer, parsePagesToPrint, validatePageRange } from '../lib/uploadUtils';
+import { calcularPrecoTotal, getPrecoPorPagina } from '../lib/pricingUtils';
 import { supabase } from '../lib/supabase';
-import { contarPaginasPDF, contarPaginasWord, estimarPaginasPowerPoint, validarPaginasEspecificas, calcularPaginasImprimir } from '../lib/pdfUtils';
 
 type TipoImpressao = 'documentos' | 'fotos';
 type TipoPapel = 'comum' | 'fotografico' | 'cartao';
 type TamanhoFoto = '10x15' | '13x18' | '15x21' | '21x29';
 
+// Interface PrintFile conforme documento técnico de referência
 interface Arquivo {
+  id: string;
   uri: string;
   name: string;
   size: number;
   tipo: 'pdf' | 'word' | 'powerpoint' | 'imagem';
-  paginas: number;
   mimeType: string;
+  pageCount: number;        // Total detectado pelo servidor
+  pagesToPrint: number;     // Total efetivo após aplicar pageRange
+  loading: boolean;         // Indicador de processamento
+  message: string;          // Mensagem de status
 }
 
 interface ConfigImpressao {
   colorido: boolean;
   papel: TipoPapel;
   copias: number;
-  paginasEspecificas: string;
+  pageRange: string;        // Intervalo de páginas (ex: "1-3, 5, 8-10")
   tamanhoFoto?: TamanhoFoto;
 }
 
@@ -47,6 +53,18 @@ interface ParceiroSelecionado {
   longitude: number;
 }
 
+interface ResumoDesconto {
+  totalSemDesconto: number;
+  totalComDesconto: number;
+  economia: number;
+  precoBasePb: number;
+  precoBaseColorido: number;
+  precoAtualPb: number | null;
+  precoAtualColorido: number | null;
+  paginasPb: number;
+  paginasColorido: number;
+}
+
 export default function ImpressaoRapida() {
   const router = useRouter();
   const [etapa, setEtapa] = useState<EtapaFluxo>('selecao_tipo');
@@ -60,6 +78,89 @@ export default function ImpressaoRapida() {
   const [horarioEstimado, setHorarioEstimado] = useState<string>('');
   const [previewVisible, setPreviewVisible] = useState(false);
   const [arquivoPreview, setArquivoPreview] = useState<Arquivo | null>(null);
+  const [precoTotal, setPrecoTotal] = useState<number>(0);
+  const [resumoDesconto, setResumoDesconto] = useState<ResumoDesconto | null>(null);
+
+  // Recalcular preço automaticamente quando arquivos ou configs mudarem
+  useEffect(() => {
+    async function atualizarPreco() {
+      const preco = await calcularPreco();
+      setPrecoTotal(preco);
+
+      const resumo = await calcularResumoDescontoVolume();
+      setResumoDesconto(resumo);
+    }
+    atualizarPreco();
+  }, [arquivos, configs, tipoSelecionado]);
+
+  async function calcularResumoDescontoVolume(): Promise<ResumoDesconto | null> {
+    if (tipoSelecionado !== 'documentos') {
+      return null;
+    }
+
+    let paginasPb = 0;
+    let paginasColorido = 0;
+    let totalEspecial = 0;
+
+    for (const arquivo of arquivos) {
+      const config = configs[arquivo.id];
+      if (!config) continue;
+
+      const pagesToPrint = config.pageRange
+        ? parsePagesToPrint(config.pageRange, arquivo.pageCount)
+        : arquivo.pageCount;
+      const paginasComCopias = pagesToPrint * config.copias;
+
+      if (config.papel === 'comum') {
+        if (config.colorido) {
+          paginasColorido += paginasComCopias;
+        } else {
+          paginasPb += paginasComCopias;
+        }
+      } else {
+        const precoEspecial = config.papel === 'cartao'
+          ? (config.colorido ? 3.5 : 3.0)
+          : 4.0;
+        totalEspecial += paginasComCopias * precoEspecial;
+      }
+    }
+
+    if (paginasPb === 0 && paginasColorido === 0) {
+      return null;
+    }
+
+    const [precoBasePb, precoBaseColorido] = await Promise.all([
+      getPrecoPorPagina('pb', 1),
+      getPrecoPorPagina('colorido', 1),
+    ]);
+
+    const [precoAtualPb, precoAtualColorido] = await Promise.all([
+      paginasPb > 0 ? getPrecoPorPagina('pb', paginasPb) : Promise.resolve(null),
+      paginasColorido > 0 ? getPrecoPorPagina('colorido', paginasColorido) : Promise.resolve(null),
+    ]);
+
+    const totalSemDesconto =
+      (paginasPb * precoBasePb) +
+      (paginasColorido * precoBaseColorido) +
+      totalEspecial;
+
+    const totalComDesconto =
+      (paginasPb * (precoAtualPb ?? precoBasePb)) +
+      (paginasColorido * (precoAtualColorido ?? precoBaseColorido)) +
+      totalEspecial;
+
+    return {
+      totalSemDesconto,
+      totalComDesconto,
+      economia: Math.max(0, totalSemDesconto - totalComDesconto),
+      precoBasePb,
+      precoBaseColorido,
+      precoAtualPb,
+      precoAtualColorido,
+      paginasPb,
+      paginasColorido,
+    };
+  }
 
   async function selecionarArquivos() {
     try {
@@ -84,50 +185,84 @@ export default function ImpressaoRapida() {
       });
 
       if (result.canceled === false && result.assets) {
-        const novosArquivosPromises = result.assets.map(async (asset: any) => {
-          let paginas = 1;
-          let tipo: 'pdf' | 'word' | 'powerpoint' | 'imagem' = 'imagem';
+        // UX Assíncrona: Arquivos aparecem imediatamente com loading
+        const arquivosIniciais = result.assets.map((asset: any) => {
+          const tipo: 'pdf' | 'word' | 'powerpoint' | 'imagem' = 
+            asset.mimeType?.includes('pdf') ? 'pdf' :
+            asset.mimeType?.includes('word') || asset.mimeType?.includes('document') ? 'word' :
+            asset.mimeType?.includes('powerpoint') || asset.mimeType?.includes('presentation') ? 'powerpoint' :
+            'imagem';
 
-          console.log(`📁 Processando arquivo: ${asset.name} (${asset.mimeType})`);
-
-          if (asset.mimeType?.includes('pdf')) {
-            tipo = 'pdf';
-            console.log('🔄 Calculando páginas do PDF...');
-            paginas = await contarPaginasPDF(asset.uri);
-          } else if (asset.mimeType?.includes('word') || asset.mimeType?.includes('document')) {
-            tipo = 'word';
-            console.log('🔄 Calculando páginas do Word...');
-            paginas = await contarPaginasWord(asset.uri, asset.size);
-          } else if (asset.mimeType?.includes('powerpoint') || asset.mimeType?.includes('presentation')) {
-            tipo = 'powerpoint';
-            console.log('🔄 Estimando slides do PowerPoint...');
-            paginas = estimarPaginasPowerPoint(asset.size);
-          } else {
-            tipo = 'imagem';
-            paginas = 1;
-          }
+          const isImagem = tipo === 'imagem';
 
           return {
+            id: `${Date.now()}_${Math.random()}`,
             uri: asset.uri,
-            name: asset.name,
-            size: asset.size,
+            name: asset.name || 'arquivo_sem_nome',
+            size: asset.size ?? 0,
             tipo,
-            paginas,
-            mimeType: asset.mimeType,
+            mimeType: asset.mimeType || '',
+            pageCount: isImagem ? 1 : 0,
+            pagesToPrint: isImagem ? 1 : 0,
+            loading: !isImagem,
+            message: isImagem ? 'Pronto' : 'Contando páginas...',
           };
         });
 
-        const novosArquivos = await Promise.all(novosArquivosPromises);
-        setArquivos([...arquivos, ...novosArquivos]);
+        setArquivos(prev => [...prev, ...arquivosIniciais]);
 
+        // Processar contagem de páginas em background
+        result.assets.forEach(async (asset: any, index: number) => {
+          const arquivo = arquivosIniciais[index];
+          
+          if (arquivo.tipo !== 'imagem') {
+            console.log(`📤 [SERVER] Enviando ${asset.name} para contagem...`);
+            
+            try {
+              const pageCount = await countPagesViaServer(
+                asset.uri,
+                asset.name || 'arquivo_sem_nome',
+                asset.mimeType || ''
+              );
+              
+              // Atualizar arquivo com contagem recebida
+              setArquivos(prev => prev.map(a => 
+                a.id === arquivo.id ? {
+                  ...a,
+                  pageCount,
+                  pagesToPrint: pageCount,
+                  loading: false,
+                  message: `${pageCount} página${pageCount !== 1 ? 's' : ''} detectada${pageCount !== 1 ? 's' : ''}`,
+                } : a
+              ));
+
+              console.log(`✅ [SERVER] ${asset.name}: ${pageCount} páginas`);
+            } catch (error) {
+              console.warn(`⚠️ [SERVER] Falha pontual na contagem de ${asset.name}, aplicando fallback local`);
+              
+              // Fallback: usar 1 página
+              setArquivos(prev => prev.map(a => 
+                a.id === arquivo.id ? {
+                  ...a,
+                  pageCount: 1,
+                  pagesToPrint: 1,
+                  loading: false,
+                  message: '1 página detectada',
+                } : a
+              ));
+            }
+          }
+        });
+
+        // Configurações iniciais
         const novasConfigs = { ...configs };
-        novosArquivos.forEach(arquivo => {
-          if (!novasConfigs[arquivo.uri]) {
-            novasConfigs[arquivo.uri] = {
-              colorido: true,
+        arquivosIniciais.forEach(arquivo => {
+          if (!novasConfigs[arquivo.id]) {
+            novasConfigs[arquivo.id] = {
+              colorido: true, // Colorido por padrão
               papel: tipoSelecionado === 'fotos' ? 'fotografico' : 'comum',
               copias: 1,
-              paginasEspecificas: '',
+              pageRange: '', // Vazio = todas as páginas
               tamanhoFoto: tipoSelecionado === 'fotos' ? '10x15' : undefined,
             };
           }
@@ -140,10 +275,10 @@ export default function ImpressaoRapida() {
     }
   }
 
-  function removerArquivo(uri: string) {
-    setArquivos(arquivos.filter(a => a.uri !== uri));
+  function removerArquivo(id: string) {
+    setArquivos(arquivos.filter(a => a.id !== id));
     const novasConfigs = { ...configs };
-    delete novasConfigs[uri];
+    delete novasConfigs[id];
     setConfigs(novasConfigs);
   }
 
@@ -152,30 +287,49 @@ export default function ImpressaoRapida() {
     setPreviewVisible(true);
   }
 
-  function calcularPreco(): number {
-    let total = 0;
-    
+  // Cálculo de preço reativo com desconto progressivo
+  async function calcularPreco(): Promise<number> {
     if (tipoSelecionado === 'documentos') {
-      arquivos.forEach(arquivo => {
-        const config = configs[arquivo.uri];
-        if (!config) return;
+      const arquivosParaCalculo = arquivos.map(arquivo => {
+        const config = configs[arquivo.id];
+        if (!config) return null;
         
-        const paginasImprimir = calcularPaginasImprimir(arquivo.paginas, config.paginasEspecificas);
-        let precoPorPagina = 0;
+        // Calcular pagesToPrint baseado em pageRange
+        const pagesToPrint = config.pageRange 
+          ? parsePagesToPrint(config.pageRange, arquivo.pageCount)
+          : arquivo.pageCount;
+        
+        return {
+          pagesToPrint,
+          copies: config.copias,
+          colorMode: config.colorido ? 'colorido' as const : 'pb' as const,
+          papel: config.papel,
+        };
+      }).filter(Boolean) as Array<{ pagesToPrint: number; copies: number; colorMode: 'pb' | 'colorido'; papel: TipoPapel }>;
 
-        if (config.papel === 'comum') {
-          precoPorPagina = config.colorido ? 1.50 : 1.00;
-        } else if (config.papel === 'cartao') {
-          precoPorPagina = config.colorido ? 3.50 : 3.00;
-        } else if (config.papel === 'fotografico') {
-          precoPorPagina = 4.00;
-        }
-        
-        total += paginasImprimir * config.copias * precoPorPagina;
-      });
+      const arquivosComDesconto = arquivosParaCalculo
+        .filter(a => a.papel === 'comum')
+        .map(({ pagesToPrint, copies, colorMode }) => ({ pagesToPrint, copies, colorMode }));
+
+      const totalComDesconto = arquivosComDesconto.length > 0
+        ? (await calcularPrecoTotal(arquivosComDesconto)).total
+        : 0;
+
+      const totalPapeisEspeciais = arquivosParaCalculo
+        .filter(a => a.papel !== 'comum')
+        .reduce((sum, a) => {
+          const precoPorPagina = a.papel === 'cartao'
+            ? (a.colorMode === 'colorido' ? 3.5 : 3.0)
+            : 4.0;
+
+          return sum + (a.pagesToPrint * a.copies * precoPorPagina);
+        }, 0);
+
+      return totalComDesconto + totalPapeisEspeciais;
     } else if (tipoSelecionado === 'fotos') {
+      let total = 0;
       arquivos.forEach(arquivo => {
-        const config = configs[arquivo.uri];
+        const config = configs[arquivo.id];
         if (!config || !config.tamanhoFoto) return;
 
         const precosPorTamanho = {
@@ -187,9 +341,10 @@ export default function ImpressaoRapida() {
 
         total += precosPorTamanho[config.tamanhoFoto] * config.copias;
       });
+      return total;
     }
     
-    return total;
+    return 0;
   }
 
   async function handleProsseguir() {
@@ -198,13 +353,20 @@ export default function ImpressaoRapida() {
       return;
     }
 
-    // Validar páginas específicas
+    // Verificar se há arquivos ainda carregando
+    const arquivosCarregando = arquivos.filter(a => a.loading);
+    if (arquivosCarregando.length > 0) {
+      Alert.alert('Aguarde', 'Ainda estamos contando as páginas de alguns arquivos...');
+      return;
+    }
+
+    // Validar intervalos de páginas
     for (const arquivo of arquivos) {
-      const config = configs[arquivo.uri];
-      if (config && config.paginasEspecificas) {
-        const resultado = validarPaginasEspecificas(config.paginasEspecificas, arquivo.paginas);
-        if (!resultado.valido) {
-          Alert.alert('Páginas Inválidas', resultado.mensagem || 'Formato inválido');
+      const config = configs[arquivo.id];
+      if (config && config.pageRange) {
+        const resultado = validatePageRange(config.pageRange, arquivo.pageCount);
+        if (!resultado.valid) {
+          Alert.alert('Páginas Inválidas', resultado.message || 'Formato inválido');
           return;
         }
       }
@@ -218,18 +380,78 @@ export default function ImpressaoRapida() {
       console.log('📍 Parceiro selecionado:', parceiro);
       setParceiroSelecionado(parceiro);
 
+      const { data: authData } = await supabase.auth.getUser();
+      const userId = authData.user?.id;
+
+      if (!userId) {
+        Alert.alert('Sessão expirada', 'Faça login novamente para continuar.');
+        router.push('/(auth)/login');
+        return;
+      }
+
       const totalPaginas = arquivos.reduce((sum, a) => {
-        const config = configs[a.uri];
-        return sum + calcularPaginasImprimir(a.paginas, config?.paginasEspecificas || '');
+        const config = configs[a.id];
+        const pagesToPrint = config?.pageRange 
+          ? parsePagesToPrint(config.pageRange, a.pageCount)
+          : a.pageCount;
+        return sum + (pagesToPrint * (config?.copias || 1));
       }, 0);
-      const precoTotal = calcularPreco();
+      const preco = await calcularPreco();
+      setPrecoTotal(preco);
 
-      console.log('💰 Total páginas:', totalPaginas, 'Preço:', precoTotal);
+      console.log('💰 Total páginas:', totalPaginas, 'Preço:', preco.toFixed(2));
 
-      // Por enquanto, pular criação de pedido no banco e ir direto para aceite
-      // TODO: Implementar tabela pedidos_impressao corretamente
-      const pedidoId = `temp_${Date.now()}`;
-      setPedidoImpressaoId(pedidoId);
+      const arquivosPedido = arquivos.map((a) => {
+        const config = configs[a.id];
+        const pagesToPrint = config?.pageRange
+          ? parsePagesToPrint(config.pageRange, a.pageCount)
+          : a.pageCount;
+
+        return {
+          nome: a.name,
+          tipo: a.tipo,
+          mimeType: a.mimeType,
+          pageCount: a.pageCount,
+          pagesToPrint,
+          copias: config?.copias || 1,
+          colorido: config?.colorido || false,
+          papel: config?.papel || 'comum',
+          pageRange: config?.pageRange || '',
+          tamanhoFoto: config?.tamanhoFoto || null,
+        };
+      });
+
+      const { data: pedido, error: pedidoError } = await supabase
+        .from('pedidos')
+        .insert({
+          cliente_id: userId,
+          parceiro_id: parceiro.id,
+          servico_id: null,
+          tipo_servico: 'faca_voce_mesmo',
+          dados_formulario: {
+            origem: 'impressao_rapida',
+            tipoSelecionado,
+            totalPaginas,
+            mensagem,
+            arquivos: arquivosPedido,
+          },
+          valor_total: preco,
+          valor_desconto: resumoDesconto?.economia || 0,
+          valor_final: preco,
+          status: 'aguardando_pagamento',
+          status_pagamento: 'pendente',
+          metodo_pagamento: 'pix',
+          observacoes: mensagem || null,
+        })
+        .select('id, numero_pedido')
+        .single();
+
+      if (pedidoError) {
+        throw pedidoError;
+      }
+
+      setPedidoImpressaoId(pedido.id);
+      setNumeroPedido(pedido.numero_pedido || '');
       
       console.log('✅ Indo para aguardando aceite');
       setEtapa('aguardando_aceite');
@@ -241,14 +463,17 @@ export default function ImpressaoRapida() {
       }, 2000);
       
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('❌ Erro ao selecionar parceiro:', error);
-      Alert.alert('Erro', `Não foi possível continuar: ${error.message || 'Erro desconhecido'}`);
+      Alert.alert('Erro', `Não foi possível continuar: ${errorMessage}`);
     }
   }
 
   function handleAceito() {
-    const numero = `IMP${Date.now().toString().slice(-8)}`;
-    setNumeroPedido(numero);
+    if (!numeroPedido) {
+      const numero = `IMP${Date.now().toString().slice(-8)}`;
+      setNumeroPedido(numero);
+    }
 
     const tempoTotal = 15 + (parceiroSelecionado?.tempo_estimado_fila || 0);
     const agora = new Date();
@@ -260,7 +485,22 @@ export default function ImpressaoRapida() {
     setEtapa('pagamento');
   }
 
-  function handlePagamentoConcluido() {
+  async function handlePagamentoConcluido() {
+    if (pedidoImpressaoId) {
+      const { error } = await supabase
+        .from('pedidos')
+        .update({
+          status_pagamento: 'aprovado',
+          status: 'pagamento_confirmado',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', pedidoImpressaoId);
+
+      if (error) {
+        console.warn('⚠️ Falha ao atualizar status do pagamento no pedido:', error);
+      }
+    }
+
     console.log('✅ Pagamento concluído - gerando QR Code');
     setEtapa('qrcode');
   }
@@ -313,7 +553,7 @@ export default function ImpressaoRapida() {
   if (etapa === 'pagamento') {
     return (
       <TelaPagamento
-        valorTotal={calcularPreco()}
+        valorTotal={precoTotal}
         numeroPedido={numeroPedido}
         onPagamentoConcluido={handlePagamentoConcluido}
       />
@@ -431,7 +671,11 @@ export default function ImpressaoRapida() {
             {tipoSelecionado === 'documentos' ? '📄 Documentos' : '📸 Fotos'}
           </Text>
           <Text style={{ fontSize: 16, color: '#fff', opacity: 0.9 }}>
-            {arquivos.length} arquivo(s) • {arquivos.reduce((sum, a) => sum + calcularPaginasImprimir(a.paginas, configs[a.uri]?.paginasEspecificas || ''), 0)} página(s)
+            {arquivos.length} arquivo(s) • {arquivos.reduce((sum, a) => {
+              const config = configs[a.id];
+              const pagesToPrint = config?.pageRange ? parsePagesToPrint(config.pageRange, a.pageCount) : a.pageCount;
+              return sum + pagesToPrint;
+            }, 0)} página(s)
           </Text>
         </View>
 
@@ -446,30 +690,36 @@ export default function ImpressaoRapida() {
 
           {/* Lista de Arquivos */}
           {arquivos.map((arquivo, index) => {
-            const config = configs[arquivo.uri];
+            const config = configs[arquivo.id];
             if (!config) return null;
 
-            const paginasImprimir = calcularPaginasImprimir(arquivo.paginas, config.paginasEspecificas);
+            const paginasImprimir = config.pageRange 
+              ? parsePagesToPrint(config.pageRange, arquivo.pageCount)
+              : arquivo.pageCount;
 
             return (
-              <View key={index} style={{ backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12, elevation: 2 }}>
+              <View key={arquivo.id} style={{ backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12, elevation: 2 }}>
                 {/* Cabeçalho do Arquivo */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-                  <Ionicons 
-                    name={arquivo.tipo === 'pdf' ? 'document-text' : arquivo.tipo === 'word' || arquivo.tipo === 'powerpoint' ? 'document' : 'image'} 
-                    size={32} 
-                    color="#10B981" 
-                  />
+                  {arquivo.loading ? (
+                    <Ionicons name="hourglass" size={32} color="#F59E0B" />
+                  ) : (
+                    <Ionicons 
+                      name={arquivo.tipo === 'pdf' ? 'document-text' : arquivo.tipo === 'word' || arquivo.tipo === 'powerpoint' ? 'document' : 'image'} 
+                      size={32} 
+                      color="#10B981" 
+                    />
+                  )}
                   <View style={{ flex: 1, marginLeft: 12 }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold', color: Colors.text.primary }} numberOfLines={1}>{arquivo.name}</Text>
-                    <Text style={{ fontSize: 14, color: Colors.text.secondary }}>
-                      {arquivo.paginas} pág total • {paginasImprimir} pág a imprimir
+                    <Text style={{ fontSize: 14, color: arquivo.loading ? '#F59E0B' : Colors.text.secondary }}>
+                      {arquivo.message}
                     </Text>
                   </View>
-                  <TouchableOpacity onPress={() => abrirPreview(arquivo)} style={{ marginRight: 12 }}>
-                    <Ionicons name="eye" size={24} color="#10B981" />
+                  <TouchableOpacity onPress={() => abrirPreview(arquivo)} style={{ marginRight: 12 }} disabled={arquivo.loading}>
+                    <Ionicons name="eye" size={24} color={arquivo.loading ? '#D1D5DB' : '#10B981'} />
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => removerArquivo(arquivo.uri)}>
+                  <TouchableOpacity onPress={() => removerArquivo(arquivo.id)}>
                     <Ionicons name="trash" size={24} color="#EF4444" />
                   </TouchableOpacity>
                 </View>
@@ -482,7 +732,7 @@ export default function ImpressaoRapida() {
                     {/* Cor */}
                     <View style={{ flexDirection: 'row', marginBottom: 8 }}>
                       <TouchableOpacity
-                        onPress={() => setConfigs({ ...configs, [arquivo.uri]: { ...config, colorido: false } })}
+                        onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, colorido: false } })}
                         style={{ flex: 1, padding: 10, borderRadius: 8, backgroundColor: !config.colorido ? '#10B981' : '#E5E7EB', marginRight: 8 }}
                       >
                         <Text style={{ textAlign: 'center', fontWeight: 'bold', color: !config.colorido ? '#fff' : Colors.text.secondary }}>
@@ -490,7 +740,7 @@ export default function ImpressaoRapida() {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => setConfigs({ ...configs, [arquivo.uri]: { ...config, colorido: true } })}
+                        onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, colorido: true } })}
                         style={{ flex: 1, padding: 10, borderRadius: 8, backgroundColor: config.colorido ? '#10B981' : '#E5E7EB' }}
                       >
                         <Text style={{ textAlign: 'center', fontWeight: 'bold', color: config.colorido ? '#fff' : Colors.text.secondary }}>
@@ -505,7 +755,7 @@ export default function ImpressaoRapida() {
                       {(['comum', 'cartao', 'fotografico'] as TipoPapel[]).map(tipo => (
                         <TouchableOpacity
                           key={tipo}
-                          onPress={() => setConfigs({ ...configs, [arquivo.uri]: { ...config, papel: tipo } })}
+                          onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, papel: tipo } })}
                           style={{ flex: 1, padding: 8, borderRadius: 8, backgroundColor: config.papel === tipo ? '#10B981' : '#E5E7EB', marginRight: 4 }}
                         >
                           <Text style={{ textAlign: 'center', fontSize: 12, fontWeight: 'bold', color: config.papel === tipo ? '#fff' : Colors.text.secondary }}>
@@ -516,15 +766,28 @@ export default function ImpressaoRapida() {
                     </View>
 
                     {/* Páginas Específicas */}
-                    {arquivo.paginas > 1 && (
+                    {arquivo.pageCount > 1 && (
                       <>
                         <Text style={{ fontSize: 14, marginBottom: 4 }}>Páginas (ex: 1-3, 5, 7-10):</Text>
                         <TextInput
-                          value={config.paginasEspecificas}
-                          onChangeText={(text) => setConfigs({ ...configs, [arquivo.uri]: { ...config, paginasEspecificas: text } })}
+                          value={config.pageRange}
+                          onChangeText={(text) => {
+                            setConfigs({ ...configs, [arquivo.id]: { ...config, pageRange: text } });
+                            // Atualizar pagesToPrint em tempo real
+                            const newPagesToPrint = text ? parsePagesToPrint(text, arquivo.pageCount) : arquivo.pageCount;
+                            setArquivos(prev => prev.map(a => 
+                              a.id === arquivo.id ? { ...a, pagesToPrint: newPagesToPrint } : a
+                            ));
+                          }}
                           placeholder="Todas as páginas"
                           style={{ backgroundColor: Colors.background.secondary, padding: 12, borderRadius: 8, fontSize: 14, marginBottom: 8 }}
+                          editable={!arquivo.loading}
                         />
+                        {config.pageRange && (
+                          <Text style={{ fontSize: 12, color: '#10B981', marginBottom: 8 }}>
+                            ✓ {paginasImprimir} página(s) selecionada(s)
+                          </Text>
+                        )}
                       </>
                     )}
 
@@ -532,15 +795,17 @@ export default function ImpressaoRapida() {
                     <Text style={{ fontSize: 14, marginBottom: 4 }}>Cópias:</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
                       <TouchableOpacity
-                        onPress={() => setConfigs({ ...configs, [arquivo.uri]: { ...config, copias: Math.max(1, config.copias - 1) } })}
+                        onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, copias: Math.max(1, config.copias - 1) } })}
                         style={{ padding: 10, backgroundColor: '#E5E7EB', borderRadius: 8 }}
+                        disabled={arquivo.loading}
                       >
                         <Ionicons name="remove" size={20} />
                       </TouchableOpacity>
                       <Text style={{ fontSize: 18, fontWeight: 'bold', marginHorizontal: 20 }}>{config.copias}</Text>
                       <TouchableOpacity
-                        onPress={() => setConfigs({ ...configs, [arquivo.uri]: { ...config, copias: config.copias + 1 } })}
+                        onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, copias: config.copias + 1 } })}
                         style={{ padding: 10, backgroundColor: '#10B981', borderRadius: 8 }}
+                        disabled={arquivo.loading}
                       >
                         <Ionicons name="add" size={20} color="#fff" />
                       </TouchableOpacity>
@@ -556,7 +821,7 @@ export default function ImpressaoRapida() {
                       {(['10x15', '13x18', '15x21', '21x29'] as TamanhoFoto[]).map(tamanho => (
                         <TouchableOpacity
                           key={tamanho}
-                          onPress={() => setConfigs({ ...configs, [arquivo.uri]: { ...config, tamanhoFoto: tamanho } })}
+                          onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, tamanhoFoto: tamanho } })}
                           style={{ padding: 10, borderRadius: 8, backgroundColor: config.tamanhoFoto === tamanho ? '#10B981' : '#E5E7EB', marginRight: 8, marginBottom: 8 }}
                         >
                           <Text style={{ fontWeight: 'bold', color: config.tamanhoFoto === tamanho ? '#fff' : Colors.text.secondary }}>
@@ -569,14 +834,14 @@ export default function ImpressaoRapida() {
                     <Text style={{ fontSize: 14, marginBottom: 4 }}>Cópias:</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <TouchableOpacity
-                        onPress={() => setConfigs({ ...configs, [arquivo.uri]: { ...config, copias: Math.max(1, config.copias - 1) } })}
+                        onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, copias: Math.max(1, config.copias - 1) } })}
                         style={{ padding: 10, backgroundColor: '#E5E7EB', borderRadius: 8 }}
                       >
                         <Ionicons name="remove" size={20} />
                       </TouchableOpacity>
                       <Text style={{ fontSize: 18, fontWeight: 'bold', marginHorizontal: 20 }}>{config.copias}</Text>
                       <TouchableOpacity
-                        onPress={() => setConfigs({ ...configs, [arquivo.uri]: { ...config, copias: config.copias + 1 } })}
+                        onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, copias: config.copias + 1 } })}
                         style={{ padding: 10, backgroundColor: '#10B981', borderRadius: 8 }}
                       >
                         <Ionicons name="add" size={20} color="#fff" />
@@ -607,14 +872,55 @@ export default function ImpressaoRapida() {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
               <Text style={{ fontSize: 16, color: Colors.text.secondary }}>Total de páginas:</Text>
               <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                {arquivos.reduce((sum, a) => sum + calcularPaginasImprimir(a.paginas, configs[a.uri]?.paginasEspecificas || ''), 0)}
+                {arquivos.reduce((sum, a) => {
+                  const config = configs[a.id];
+                  const pagesToPrint = config?.pageRange ? parsePagesToPrint(config.pageRange, a.pageCount) : a.pageCount;
+                  return sum + pagesToPrint;
+                }, 0)}
               </Text>
             </View>
             <View style={{ borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 12, marginTop: 12 }}>
+              {resumoDesconto && (
+                <View style={{
+                  backgroundColor: '#ECFDF5',
+                  padding: 12,
+                  borderRadius: 10,
+                  marginBottom: 12,
+                  borderLeftWidth: 4,
+                  borderLeftColor: '#10B981',
+                }}>
+                  <Text style={{ fontSize: 13, color: '#065F46', fontWeight: '700', marginBottom: 6 }}>
+                    🎯 Vantagem por volume
+                  </Text>
+
+                  {resumoDesconto.paginasColorido > 0 && resumoDesconto.precoAtualColorido !== null && (
+                    <Text style={{ fontSize: 12, color: '#065F46', marginBottom: 3 }}>
+                      Colorido: R$ {resumoDesconto.precoBaseColorido.toFixed(2).replace('.', ',')}/pág → R$ {resumoDesconto.precoAtualColorido.toFixed(2).replace('.', ',')}/pág ({resumoDesconto.paginasColorido} pág)
+                    </Text>
+                  )}
+
+                  {resumoDesconto.paginasPb > 0 && resumoDesconto.precoAtualPb !== null && (
+                    <Text style={{ fontSize: 12, color: '#065F46', marginBottom: 3 }}>
+                      P&B: R$ {resumoDesconto.precoBasePb.toFixed(2).replace('.', ',')}/pág → R$ {resumoDesconto.precoAtualPb.toFixed(2).replace('.', ',')}/pág ({resumoDesconto.paginasPb} pág)
+                    </Text>
+                  )}
+
+                  <Text style={{ fontSize: 12, color: '#065F46', marginTop: 6 }}>
+                    Sem volume: R$ {resumoDesconto.totalSemDesconto.toFixed(2).replace('.', ',')} • Com volume: R$ {resumoDesconto.totalComDesconto.toFixed(2).replace('.', ',')}
+                  </Text>
+
+                  {resumoDesconto.economia > 0 && (
+                    <Text style={{ fontSize: 13, fontWeight: '800', color: '#047857', marginTop: 6 }}>
+                      Economia no pedido: R$ {resumoDesconto.economia.toFixed(2).replace('.', ',')}
+                    </Text>
+                  )}
+                </View>
+              )}
+
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Valor Total:</Text>
                 <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#10B981' }}>
-                  R$ {calcularPreco().toFixed(2).replace('.', ',')}
+                  R$ {precoTotal.toFixed(2).replace('.', ',')}
                 </Text>
               </View>
             </View>

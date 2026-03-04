@@ -141,9 +141,10 @@
     </div>
 
     <script>
-        const IP = '192.168.0.102';
+        // CONFIGURAÇÃO - Atualize se o IP mudar
+        const IP_LOCAL = '192.168.0.104';
         const PORT = '8081';
-        const expoUrl = `exp://${IP}:${PORT}`;
+        const expoUrl = `exp://${IP_LOCAL}:${PORT}`;
         
         function generateQRCode() {
             document.getElementById('qrcode').innerHTML = '';

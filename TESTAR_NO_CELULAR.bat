@@ -21,6 +21,7 @@ echo.
 cd /d "%~dp0"
 set EXPO_NO_DOCTOR=1
 set EXPO_NO_TELEMETRY=1
-npx expo start --port 8081
+set NODE_OPTIONS=--max-old-space-size=4096
+npx expo start --port 8081 --clear
 
 pause

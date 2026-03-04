@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, Image, ScrollView, Alert, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/Colors';
-import * as FileSystem from 'expo-file-system';
 
 interface PreviewDocumentoProps {
   visible: boolean;
@@ -17,6 +16,22 @@ interface PreviewDocumentoProps {
 
 export function PreviewDocumento({ visible, onClose, arquivo }: PreviewDocumentoProps) {
   const [loading, setLoading] = useState(false);
+
+  async function abrirArquivoExterno() {
+    try {
+      const canOpen = await Linking.canOpenURL(arquivo.uri);
+
+      if (!canOpen) {
+        Alert.alert('Preview indisponível', 'Não foi possível abrir este arquivo em aplicativo externo neste dispositivo.');
+        return;
+      }
+
+      await Linking.openURL(arquivo.uri);
+    } catch (error) {
+      console.error('❌ [PREVIEW] Falha ao abrir arquivo externo:', error);
+      Alert.alert('Erro', 'Não foi possível abrir o arquivo externo.');
+    }
+  }
 
   return (
     <Modal
@@ -87,7 +102,7 @@ export function PreviewDocumento({ visible, onClose, arquivo }: PreviewDocumento
               <Ionicons 
                 name={
                   arquivo.tipo === 'pdf' ? 'document-text' :
-                  arquivo.tipo === 'word' ? 'document' :
+                  arquivo.tipo === 'word' ? 'document' : 
                   'easel'
                 } 
                 size={80} 
@@ -118,21 +133,37 @@ export function PreviewDocumento({ visible, onClose, arquivo }: PreviewDocumento
                 borderRadius: 12,
                 borderLeftWidth: 4,
                 borderLeftColor: '#3B82F6',
-                width: '100%'
+                width: '100%',
+                marginBottom: 16
               }}>
                 <Text style={{ fontSize: 14, color: '#1E40AF', lineHeight: 22 }}>
-                  <Text style={{ fontWeight: 'bold' }}>ℹ️ Preview completo:</Text>
+                  <Text style={{ fontWeight: 'bold' }}>👁️ Preview:</Text>
                   {'\n\n'}
-                  O preview completo de documentos PDF, Word e PowerPoint estará disponível em breve.
+                  O arquivo foi carregado com sucesso e será enviado para impressão com as configurações selecionadas.
                   {'\n\n'}
-                  Por enquanto, você pode:
-                  {'\n'}• Verificar o nome do arquivo
-                  {'\n'}• Confirmar o número de páginas
-                  {'\n'}• Ajustar as configurações de impressão
-                  {'\n\n'}
-                  O documento será enviado corretamente para impressão.
+                  • Verifique o nome do arquivo acima
+                  {'\n'}• Confirme as configurações de impressão
+                  {'\n'}• O documento será processado corretamente
                 </Text>
               </View>
+
+              <TouchableOpacity
+                onPress={abrirArquivoExterno}
+                style={{
+                  backgroundColor: '#3B82F6',
+                  padding: 14,
+                  borderRadius: 12,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%'
+                }}
+              >
+                <Ionicons name="open-outline" size={20} color="#fff" />
+                <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>
+                  Abrir em Aplicativo Externo
+                </Text>
+              </TouchableOpacity>
             </View>
           )}
         </ScrollView>

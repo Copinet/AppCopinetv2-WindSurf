@@ -11,9 +11,9 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 0,
-          height: 85,
-          paddingBottom: 15,
-          paddingTop: 15,
+          height: 95,
+          paddingBottom: 25,
+          paddingTop: 10,
           elevation: 20,
           shadowColor: Colors.shadow.dark,
           shadowOffset: { width: 0, height: -4 },
@@ -21,12 +21,13 @@ export default function TabsLayout() {
           shadowRadius: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: '700',
-          marginTop: 6,
+          marginTop: 4,
         },
         tabBarItemStyle: {
-          paddingVertical: 8,
+          paddingVertical: 10,
+          minHeight: 60,
         },
         headerStyle: {
           backgroundColor: Colors.primary.DEFAULT,
