@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, Image, ScrollView, Alert, Linking } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, Modal, TouchableOpacity, Image, ScrollView, Alert, Linking, Platform, ActivityIndicator } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/Colors';
+import { getDocxTextPreview, getPdfTextPreview, getPptxTextPreview } from '../lib/openXmlUtils';
 
 interface PreviewDocumentoProps {
   visible: boolean;
@@ -16,20 +18,111 @@ interface PreviewDocumentoProps {
 
 export function PreviewDocumento({ visible, onClose, arquivo }: PreviewDocumentoProps) {
   const [loading, setLoading] = useState(false);
+  const [previewText, setPreviewText] = useState<string>('');
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
-  async function abrirArquivoExterno() {
-    try {
-      const canOpen = await Linking.canOpenURL(arquivo.uri);
+  useEffect(() => {
+    let active = true;
 
-      if (!canOpen) {
-        Alert.alert('Preview indisponível', 'Não foi possível abrir este arquivo em aplicativo externo neste dispositivo.');
+    async function loadPreview() {
+      if (!visible) {
         return;
       }
 
-      await Linking.openURL(arquivo.uri);
+      if (arquivo.tipo !== 'word' && arquivo.tipo !== 'powerpoint') {
+        setPreviewText('');
+        return;
+      }
+
+      setLoadingPreview(true);
+
+      try {
+        const extracted =
+          arquivo.tipo === 'word'
+            ? await getDocxTextPreview(arquivo.uri)
+            : await getPptxTextPreview(arquivo.uri);
+
+        if (!active) {
+          return;
+        }
+
+        setPreviewText(
+          extracted ||
+            'Nao foi possivel montar a previa detalhada deste documento neste dispositivo, mas o arquivo esta pronto para impressao.'
+        );
+      } catch (error) {
+        if (!active) {
+          return;
+        }
+        setPreviewText('Nao foi possivel montar a previa detalhada deste documento neste dispositivo.');
+      } finally {
+        if (active) {
+          setLoadingPreview(false);
+        }
+      }
+    }
+
+    loadPreview();
+
+    return () => {
+      active = false;
+    };
+  }, [visible, arquivo.tipo, arquivo.uri]);
+
+  async function abrirArquivoExterno() {
+    setLoading(true);
+
+    try {
+      const urisToTry: string[] = [];
+      const originalUri = arquivo.uri;
+
+      urisToTry.push(originalUri);
+
+      const encodedUri = encodeURI(originalUri);
+      if (encodedUri !== originalUri) {
+        urisToTry.push(encodedUri);
+      }
+
+      // No Android, alguns dispositivos só abrem com content://.
+      if (Platform.OS === 'android' && originalUri.startsWith('file://')) {
+        const fileInfo = await FileSystem.getInfoAsync(originalUri);
+        if (!fileInfo.exists) {
+          Alert.alert('Arquivo não encontrado', 'Não foi possível localizar este arquivo para pré-visualização.');
+          return;
+        }
+
+        const contentUri = await FileSystem.getContentUriAsync(originalUri);
+        urisToTry.unshift(contentUri);
+
+        const encodedContentUri = encodeURI(contentUri);
+        if (encodedContentUri !== contentUri) {
+          urisToTry.unshift(encodedContentUri);
+        }
+      }
+
+      let opened = false;
+
+      for (const uri of urisToTry) {
+        try {
+          await Linking.openURL(uri);
+          opened = true;
+          break;
+        } catch (openError) {
+          console.warn('⚠️ [PREVIEW] Tentativa de abertura falhou:', uri, openError);
+        }
+      }
+
+      if (!opened) {
+        Alert.alert(
+          'Preview indisponível',
+          'Não foi possível abrir este arquivo em aplicativo externo neste dispositivo. Verifique se há um app compatível instalado.'
+        );
+      }
     } catch (error) {
       console.error('❌ [PREVIEW] Falha ao abrir arquivo externo:', error);
       Alert.alert('Erro', 'Não foi possível abrir o arquivo externo.');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -100,14 +193,10 @@ export function PreviewDocumento({ visible, onClose, arquivo }: PreviewDocumento
               alignItems: 'center',
             }}>
               <Ionicons 
-                name={
-                  arquivo.tipo === 'pdf' ? 'document-text' :
-                  arquivo.tipo === 'word' ? 'document' : 
-                  'easel'
-                } 
-                size={80} 
-                color="#10B981" 
-                style={{ marginBottom: 16 }}
+                name={arquivo.tipo === 'pdf' ? 'document-text' : arquivo.tipo === 'word' ? 'document' : 'easel'} 
+                size={72} 
+                color={arquivo.tipo === 'pdf' ? '#EF4444' : arquivo.tipo === 'word' ? '#3B82F6' : '#F59E0B'}
+                style={{ marginBottom: 12 }}
               />
               <Text style={{ 
                 fontSize: 18, 
@@ -127,30 +216,32 @@ export function PreviewDocumento({ visible, onClose, arquivo }: PreviewDocumento
                 Tipo: {arquivo.tipo.toUpperCase()}
               </Text>
               
-              <View style={{
-                backgroundColor: '#EFF6FF',
-                padding: 16,
-                borderRadius: 12,
-                borderLeftWidth: 4,
-                borderLeftColor: '#3B82F6',
-                width: '100%',
-                marginBottom: 16
-              }}>
-                <Text style={{ fontSize: 14, color: '#1E40AF', lineHeight: 22 }}>
-                  <Text style={{ fontWeight: 'bold' }}>👁️ Preview:</Text>
-                  {'\n\n'}
-                  O arquivo foi carregado com sucesso e será enviado para impressão com as configurações selecionadas.
-                  {'\n\n'}
-                  • Verifique o nome do arquivo acima
-                  {'\n'}• Confirme as configurações de impressão
-                  {'\n'}• O documento será processado corretamente
-                </Text>
-              </View>
+              {arquivo.tipo === 'pdf' ? (
+                <View style={{ backgroundColor: '#FEF2F2', padding: 16, borderRadius: 12, borderLeftWidth: 4, borderLeftColor: '#EF4444', width: '100%', marginBottom: 16 }}>
+                  <Text style={{ fontSize: 14, color: '#991B1B', fontWeight: 'bold', marginBottom: 4 }}>📄 Documento PDF</Text>
+                  <Text style={{ fontSize: 13, color: '#7F1D1D' }}>Arquivo carregado e pronto para impressão.{'\n'}Use "Abrir em outro app" para visualizar o conteúdo completo.</Text>
+                </View>
+              ) : (
+                <View style={{ backgroundColor: '#EFF6FF', padding: 16, borderRadius: 12, borderLeftWidth: 4, borderLeftColor: '#3B82F6', width: '100%', marginBottom: 16 }}>
+                  {loadingPreview ? (
+                    <View style={{ alignItems: 'center', paddingVertical: 12 }}>
+                      <ActivityIndicator size="large" color="#3B82F6" />
+                      <Text style={{ fontSize: 13, color: '#1E40AF', marginTop: 8 }}>Carregando prévia...</Text>
+                    </View>
+                  ) : (
+                    <Text style={{ fontSize: 13, color: '#1E40AF', lineHeight: 20 }}>
+                      <Text style={{ fontWeight: 'bold' }}>👁️ Prévia do conteúdo:{'\n'}</Text>
+                      {previewText || 'Arquivo carregado e pronto para impressão.'}
+                    </Text>
+                  )}
+                </View>
+              )}
 
               <TouchableOpacity
                 onPress={abrirArquivoExterno}
+                disabled={loading}
                 style={{
-                  backgroundColor: '#3B82F6',
+                  backgroundColor: loading ? '#BFDBFE' : '#DBEAFE',
                   padding: 14,
                   borderRadius: 12,
                   flexDirection: 'row',
@@ -159,9 +250,9 @@ export function PreviewDocumento({ visible, onClose, arquivo }: PreviewDocumento
                   width: '100%'
                 }}
               >
-                <Ionicons name="open-outline" size={20} color="#fff" />
-                <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>
-                  Abrir em Aplicativo Externo
+                <Ionicons name="open-outline" size={20} color="#1E40AF" />
+                <Text style={{ color: '#1E40AF', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>
+                  {loading ? 'Abrindo...' : 'Abrir em outro app (opcional)'}
                 </Text>
               </TouchableOpacity>
             </View>

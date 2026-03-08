@@ -10,6 +10,11 @@ interface PrecoPorFaixa {
   preco_por_pagina: number;
 }
 
+export interface RegraDescontoVolume {
+  ativo: boolean;
+  minPaginas: number | null;
+}
+
 // Cache de preços para evitar múltiplas consultas
 let precosCache: PrecoPorFaixa[] | null = null;
 let cacheTimestamp: number = 0;
@@ -200,4 +205,39 @@ export async function getTabelaPrecos(): Promise<{
     }));
 
   return { pb, colorido };
+}
+
+/**
+ * Descobre o menor volume (dinâmico no painel admin) em que o desconto começa a valer.
+ */
+export async function getRegraDescontoVolume(): Promise<RegraDescontoVolume> {
+  const precos = await fetchPrecos();
+
+  let minPaginas: number | null = null;
+
+  for (const tipo of ['pb', 'colorido'] as const) {
+    const faixas = precos
+      .filter((p) => p.tipo_impressao === tipo)
+      .sort((a, b) => a.paginas_min - b.paginas_min);
+
+    if (faixas.length === 0) {
+      continue;
+    }
+
+    const precoBase = faixas[0].preco_por_pagina;
+    const faixaComDesconto = faixas.find((f) => f.preco_por_pagina < precoBase);
+
+    if (!faixaComDesconto) {
+      continue;
+    }
+
+    minPaginas = minPaginas === null
+      ? faixaComDesconto.paginas_min
+      : Math.min(minPaginas, faixaComDesconto.paginas_min);
+  }
+
+  return {
+    ativo: minPaginas !== null,
+    minPaginas,
+  };
 }

@@ -299,11 +299,14 @@ function PedidoCard({ pedido, onPress }: { pedido: Pedido; onPress: () => void }
       }}
     >
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <Text style={{ fontSize: 16, fontWeight: '800', color: Colors.text.primary }}>
+        <Text
+          numberOfLines={1}
+          style={{ fontSize: 16, fontWeight: '800', color: Colors.text.primary, flex: 1, marginRight: 10 }}
+        >
           #{pedido.numero_pedido}
         </Text>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1, maxWidth: '55%' }}>
           {pedido.status_pagamento === 'aprovado' && (
             <View style={{
               backgroundColor: '#ECFDF5',
@@ -317,7 +320,7 @@ function PedidoCard({ pedido, onPress }: { pedido: Pedido; onPress: () => void }
           )}
 
           <Ionicons name={statusInfo.icon as any} size={18} color={statusInfo.color} style={{ marginRight: 6 }} />
-          <Text style={{ fontSize: 13, fontWeight: '700', color: statusInfo.color }}>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: statusInfo.color, flexShrink: 1 }}>
             {statusInfo.label}
           </Text>
         </View>

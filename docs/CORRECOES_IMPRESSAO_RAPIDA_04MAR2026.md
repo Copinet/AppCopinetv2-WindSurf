@@ -153,3 +153,44 @@ Comando sugerido:
 - Sempre preservar visual base da tela; ajustes devem ser incrementais.
 - Em instabilidade de rede/Edge Function, manter fallback local silencioso e confiavel.
 - Ao concluir lote de correcoes, reiniciar Expo com cache limpo antes de validar no celular.
+
+---
+
+## 10) Ajustes adicionais apos validacao em campo (prints)
+
+### 10.1 Distancia de parceiro x mapa
+Arquivo: `components/MapaParceiros.tsx`
+
+- Distancia exibida agora usa fator de rota urbana sobre a distancia em linha reta para aproximar melhor da quilometragem do mapa.
+- Tempo estimado atualizado com regra de velocidade por faixa:
+  - acima de 5km: perfil carro
+  - ate 5km: perfil urbano reduzido
+
+Objetivo:
+- reduzir divergencia do tipo "3,6 km no card" vs "5,3 km no mapa".
+
+### 10.2 Word detectando 1 pagina (falso)
+Arquivos: `supabase/functions/count-pages/index.ts`, `lib/pdfUtils.ts`
+
+- DOCX no servidor ganhou heuristicas extras:
+  - secoes (`w:sectPr`)
+  - paragrafos (`w:p`)
+  - estimativa por tamanho
+  - combinacao por maior valor confiavel com metadados, breaks e palavras
+- Fallback local de Word no app ficou menos agressivo para reduzir falso 1 quando o servidor estiver indisponivel.
+
+### 10.3 Status do pedido cortando no card
+Arquivo: `app/(tabs)/orders.tsx`
+
+- Header do card ajustado com `flexShrink`, `maxWidth` e distribuicao para telas pequenas.
+- Texto de status permanece dentro do card sem cortar para fora da tela.
+
+### 10.4 Card de desconto com limiar dinamico
+Arquivos: `lib/pricingUtils.ts`, `app/impressao-rapida.tsx`
+
+- Regra de "a partir de X paginas" agora vem dinamicamente da tabela ativa do admin.
+- Com desconto aplicado: mostra card "Vantagem por volume" com economia.
+- Sem desconto aplicado: mostra dica amigavel informando a partir de quantas paginas o desconto comeca e quantas faltam.
+
+Observacao de UX:
+- Texto simplificado para publico leigo/idoso, com foco em mensagem clara de beneficio.

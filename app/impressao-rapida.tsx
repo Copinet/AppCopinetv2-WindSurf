@@ -9,13 +9,32 @@ import { AguardandoAceite } from '../components/AguardandoAceite';
 import { TelaPagamento } from '../components/TelaPagamento';
 import { QRCodeRetirada } from '../components/QRCodeRetirada';
 import { PreviewDocumento } from '../components/PreviewDocumento';
+import { SeletorPaginasVisual } from '../components/SeletorPaginasVisual';
 import { countPagesViaServer, parsePagesToPrint, validatePageRange } from '../lib/uploadUtils';
-import { calcularPrecoTotal, getPrecoPorPagina } from '../lib/pricingUtils';
+import { calcularPrecoTotal, getPrecoPorPagina, getRegraDescontoVolume } from '../lib/pricingUtils';
 import { supabase } from '../lib/supabase';
 
 type TipoImpressao = 'documentos' | 'fotos';
 type TipoPapel = 'comum' | 'fotografico' | 'cartao';
 type TamanhoFoto = '10x15' | '13x18' | '15x21' | '21x29';
+type CategoriaServicoFoto = 'revelacao_fotos' | 'impressao_imagens_sulfite';
+type LayoutImagemFolha = 1 | 2 | 4;
+
+function parseRangeStringToArray(range: string, total: number): number[] {
+  if (!range.trim()) return [];
+  const pages: number[] = [];
+  for (const part of range.split(/[,;]/)) {
+    const t = part.trim();
+    const m = t.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (let i = parseInt(m[1]); i <= Math.min(parseInt(m[2]), total); i++) pages.push(i);
+    } else {
+      const n = parseInt(t);
+      if (n >= 1 && n <= total) pages.push(n);
+    }
+  }
+  return [...new Set(pages)].sort((a, b) => a - b);
+}
 
 // Interface PrintFile conforme documento técnico de referência
 interface Arquivo {
@@ -37,6 +56,7 @@ interface ConfigImpressao {
   copias: number;
   pageRange: string;        // Intervalo de páginas (ex: "1-3, 5, 8-10")
   tamanhoFoto?: TamanhoFoto;
+  layoutImagemFolha?: LayoutImagemFolha;
 }
 
 type EtapaFluxo = 'selecao_tipo' | 'upload' | 'selecao_parceiro' | 'aguardando_aceite' | 'pagamento' | 'qrcode';
@@ -63,6 +83,10 @@ interface ResumoDesconto {
   precoAtualColorido: number | null;
   paginasPb: number;
   paginasColorido: number;
+  descontoAtivo: boolean;
+  minPaginasDesconto: number | null;
+  paginasFaltantes: number;
+  aplicaDesconto: boolean;
 }
 
 export default function ImpressaoRapida() {
@@ -80,6 +104,8 @@ export default function ImpressaoRapida() {
   const [arquivoPreview, setArquivoPreview] = useState<Arquivo | null>(null);
   const [precoTotal, setPrecoTotal] = useState<number>(0);
   const [resumoDesconto, setResumoDesconto] = useState<ResumoDesconto | null>(null);
+  const [categoriaServicoFoto, setCategoriaServicoFoto] = useState<CategoriaServicoFoto>('revelacao_fotos');
+  const [layoutGlobalSulfite, setLayoutGlobalSulfite] = useState<LayoutImagemFolha>(1);
 
   // Recalcular preço automaticamente quando arquivos ou configs mudarem
   useEffect(() => {
@@ -91,10 +117,11 @@ export default function ImpressaoRapida() {
       setResumoDesconto(resumo);
     }
     atualizarPreco();
-  }, [arquivos, configs, tipoSelecionado]);
+  }, [arquivos, configs, tipoSelecionado, categoriaServicoFoto, layoutGlobalSulfite]);
 
   async function calcularResumoDescontoVolume(): Promise<ResumoDesconto | null> {
-    if (tipoSelecionado !== 'documentos') {
+    const isSulfite = tipoSelecionado === 'fotos' && categoriaServicoFoto === 'impressao_imagens_sulfite';
+    if (tipoSelecionado !== 'documentos' && !isSulfite) {
       return null;
     }
 
@@ -102,26 +129,30 @@ export default function ImpressaoRapida() {
     let paginasColorido = 0;
     let totalEspecial = 0;
 
-    for (const arquivo of arquivos) {
-      const config = configs[arquivo.id];
-      if (!config) continue;
+    if (isSulfite) {
+      paginasColorido = calcularTotalFolhasSulfite();
+    } else {
+      for (const arquivo of arquivos) {
+        const config = configs[arquivo.id];
+        if (!config) continue;
 
-      const pagesToPrint = config.pageRange
-        ? parsePagesToPrint(config.pageRange, arquivo.pageCount)
-        : arquivo.pageCount;
-      const paginasComCopias = pagesToPrint * config.copias;
+        const pagesToPrint = config.pageRange
+          ? parsePagesToPrint(config.pageRange, arquivo.pageCount)
+          : arquivo.pageCount;
+        const paginasComCopias = pagesToPrint * config.copias;
 
-      if (config.papel === 'comum') {
-        if (config.colorido) {
-          paginasColorido += paginasComCopias;
+        if (config.papel === 'comum') {
+          if (config.colorido) {
+            paginasColorido += paginasComCopias;
+          } else {
+            paginasPb += paginasComCopias;
+          }
         } else {
-          paginasPb += paginasComCopias;
+          const precoEspecial = config.papel === 'cartao'
+            ? (config.colorido ? 3.5 : 3.0)
+            : 4.0;
+          totalEspecial += paginasComCopias * precoEspecial;
         }
-      } else {
-        const precoEspecial = config.papel === 'cartao'
-          ? (config.colorido ? 3.5 : 3.0)
-          : 4.0;
-        totalEspecial += paginasComCopias * precoEspecial;
       }
     }
 
@@ -149,16 +180,27 @@ export default function ImpressaoRapida() {
       (paginasColorido * (precoAtualColorido ?? precoBaseColorido)) +
       totalEspecial;
 
+    const regraDesconto = await getRegraDescontoVolume();
+    const totalPaginasComuns = paginasPb + paginasColorido;
+    const paginasFaltantes = regraDesconto.ativo && regraDesconto.minPaginas !== null
+      ? Math.max(0, regraDesconto.minPaginas - totalPaginasComuns)
+      : 0;
+    const economia = Math.max(0, totalSemDesconto - totalComDesconto);
+
     return {
       totalSemDesconto,
       totalComDesconto,
-      economia: Math.max(0, totalSemDesconto - totalComDesconto),
+      economia,
       precoBasePb,
       precoBaseColorido,
       precoAtualPb,
       precoAtualColorido,
       paginasPb,
       paginasColorido,
+      descontoAtivo: regraDesconto.ativo,
+      minPaginasDesconto: regraDesconto.minPaginas,
+      paginasFaltantes,
+      aplicaDesconto: economia > 0,
     };
   }
 
@@ -187,10 +229,12 @@ export default function ImpressaoRapida() {
       if (result.canceled === false && result.assets) {
         // UX Assíncrona: Arquivos aparecem imediatamente com loading
         const arquivosIniciais = result.assets.map((asset: any) => {
+          const nome = (asset.name || '').toLowerCase();
+          const mime = (asset.mimeType || '').toLowerCase();
           const tipo: 'pdf' | 'word' | 'powerpoint' | 'imagem' = 
-            asset.mimeType?.includes('pdf') ? 'pdf' :
-            asset.mimeType?.includes('word') || asset.mimeType?.includes('document') ? 'word' :
-            asset.mimeType?.includes('powerpoint') || asset.mimeType?.includes('presentation') ? 'powerpoint' :
+            mime.includes('pdf') || nome.endsWith('.pdf') ? 'pdf' :
+            mime.includes('word') || mime.includes('wordprocessing') || nome.endsWith('.doc') || nome.endsWith('.docx') ? 'word' :
+            mime.includes('powerpoint') || mime.includes('presentation') || nome.endsWith('.ppt') || nome.endsWith('.pptx') ? 'powerpoint' :
             'imagem';
 
           const isImagem = tipo === 'imagem';
@@ -260,10 +304,11 @@ export default function ImpressaoRapida() {
           if (!novasConfigs[arquivo.id]) {
             novasConfigs[arquivo.id] = {
               colorido: true, // Colorido por padrão
-              papel: tipoSelecionado === 'fotos' ? 'fotografico' : 'comum',
+              papel: tipoSelecionado === 'fotos' ? getTipoPapelCategoriaFoto(categoriaServicoFoto) : 'comum',
               copias: 1,
               pageRange: '', // Vazio = todas as páginas
-              tamanhoFoto: tipoSelecionado === 'fotos' ? '10x15' : undefined,
+              tamanhoFoto: tipoSelecionado === 'fotos' && categoriaServicoFoto === 'revelacao_fotos' ? '10x15' : undefined,
+              layoutImagemFolha: tipoSelecionado === 'fotos' ? 1 : undefined,
             };
           }
         });
@@ -285,6 +330,40 @@ export default function ImpressaoRapida() {
   function abrirPreview(arquivo: Arquivo) {
     setArquivoPreview(arquivo);
     setPreviewVisible(true);
+  }
+
+  function getTipoPapelCategoriaFoto(categoria: CategoriaServicoFoto): TipoPapel {
+    return categoria === 'revelacao_fotos' ? 'fotografico' : 'comum';
+  }
+
+  function calcularFolhasImagem(config: ConfigImpressao): number {
+    const layout = config.layoutImagemFolha || 1;
+    return Math.max(1, Math.ceil(config.copias / layout));
+  }
+
+  function calcularTotalFolhasSulfite(): number {
+    if (categoriaServicoFoto !== 'impressao_imagens_sulfite') return 0;
+    const n = arquivos.filter(a => a.tipo === 'imagem').length;
+    return n === 0 ? 0 : Math.ceil(n / layoutGlobalSulfite);
+  }
+
+  function atualizarCategoriaFoto(categoria: CategoriaServicoFoto) {
+    setCategoriaServicoFoto(categoria);
+    setConfigs((prev) => {
+      const next = { ...prev };
+
+      Object.keys(next).forEach((id) => {
+        const atual = next[id];
+        next[id] = {
+          ...atual,
+          papel: getTipoPapelCategoriaFoto(categoria),
+          tamanhoFoto: categoria === 'revelacao_fotos' ? (atual.tamanhoFoto || '10x15') : undefined,
+          layoutImagemFolha: categoria === 'impressao_imagens_sulfite' ? (atual.layoutImagemFolha || 1) : undefined,
+        };
+      });
+
+      return next;
+    });
   }
 
   // Cálculo de preço reativo com desconto progressivo
@@ -327,19 +406,19 @@ export default function ImpressaoRapida() {
 
       return totalComDesconto + totalPapeisEspeciais;
     } else if (tipoSelecionado === 'fotos') {
+      if (categoriaServicoFoto === 'impressao_imagens_sulfite') {
+        const folhas = calcularTotalFolhasSulfite();
+        if (folhas === 0) return 0;
+        const resultado = await calcularPrecoTotal([{ pagesToPrint: folhas, copies: 1, colorMode: 'colorido' }]);
+        return resultado.total;
+      }
       let total = 0;
       arquivos.forEach(arquivo => {
         const config = configs[arquivo.id];
-        if (!config || !config.tamanhoFoto) return;
+        if (!config) return;
 
-        const precosPorTamanho = {
-          '10x15': 3.00,
-          '13x18': 5.00,
-          '15x21': 7.00,
-          '21x29': 10.00,
-        };
-
-        total += precosPorTamanho[config.tamanhoFoto] * config.copias;
+        const precoRevelacao = ({ '10x15': 3, '13x18': 5, '15x21': 7, '21x29': 10 } as const)[config.tamanhoFoto || '10x15'];
+        total += precoRevelacao * config.copias;
       });
       return total;
     }
@@ -418,8 +497,22 @@ export default function ImpressaoRapida() {
           papel: config?.papel || 'comum',
           pageRange: config?.pageRange || '',
           tamanhoFoto: config?.tamanhoFoto || null,
+          layoutImagemFolha: config?.layoutImagemFolha || null,
+          totalFolhasCalculado:
+            tipoSelecionado === 'fotos' && categoriaServicoFoto === 'impressao_imagens_sulfite' && config
+              ? calcularFolhasImagem(config)
+              : null,
         };
       });
+
+      const totalFolhasCalculadoPedido =
+        tipoSelecionado === 'fotos' && categoriaServicoFoto === 'impressao_imagens_sulfite'
+          ? calcularTotalFolhasSulfite()
+          : null;
+      const layoutEscolhidoPedido =
+        tipoSelecionado === 'fotos' && categoriaServicoFoto === 'impressao_imagens_sulfite'
+          ? layoutGlobalSulfite
+          : null;
 
       const { data: pedido, error: pedidoError } = await supabase
         .from('pedidos')
@@ -431,10 +524,18 @@ export default function ImpressaoRapida() {
           dados_formulario: {
             origem: 'impressao_rapida',
             tipoSelecionado,
+            categoriaServicoFoto: tipoSelecionado === 'fotos' ? categoriaServicoFoto : null,
+            tipoPapelFoto: tipoSelecionado === 'fotos' ? getTipoPapelCategoriaFoto(categoriaServicoFoto) : null,
+            layoutEscolhido: layoutEscolhidoPedido,
+            totalFolhasCalculado: totalFolhasCalculadoPedido,
             totalPaginas,
             mensagem,
             arquivos: arquivosPedido,
           },
+          categoria_servico: tipoSelecionado === 'fotos' ? categoriaServicoFoto : null,
+          tipo_papel: tipoSelecionado === 'fotos' ? getTipoPapelCategoriaFoto(categoriaServicoFoto) : null,
+          layout_escolhido: layoutEscolhidoPedido,
+          total_folhas_calculado: totalFolhasCalculadoPedido,
           valor_total: preco,
           valor_desconto: resumoDesconto?.economia || 0,
           valor_final: preco,
@@ -623,7 +724,7 @@ export default function ImpressaoRapida() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => { setTipoSelecionado('fotos'); setEtapa('upload'); }}
+            onPress={() => { setTipoSelecionado('fotos'); setCategoriaServicoFoto('revelacao_fotos'); setEtapa('upload'); }}
             style={{ backgroundColor: '#fff', padding: 24, borderRadius: 16, marginBottom: 16, elevation: 4, borderLeftWidth: 4, borderLeftColor: '#8B5CF6' }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
@@ -688,6 +789,63 @@ export default function ImpressaoRapida() {
             <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}>Adicionar Arquivos</Text>
           </TouchableOpacity>
 
+          {tipoSelecionado === 'fotos' && (
+            <View style={{ backgroundColor: '#fff', padding: 14, borderRadius: 12, marginBottom: 12, elevation: 2 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8 }}>Como imprimir as imagens?</Text>
+              <View style={{ flexDirection: 'row' }}>
+                <TouchableOpacity
+                  onPress={() => atualizarCategoriaFoto('revelacao_fotos')}
+                  style={{ flex: 1, marginRight: 8, padding: 10, borderRadius: 8, backgroundColor: categoriaServicoFoto === 'revelacao_fotos' ? '#10B981' : '#E5E7EB' }}
+                >
+                  <Text style={{ textAlign: 'center', fontSize: 12, fontWeight: 'bold', color: categoriaServicoFoto === 'revelacao_fotos' ? '#fff' : Colors.text.secondary }}>Revelação</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => atualizarCategoriaFoto('impressao_imagens_sulfite')}
+                  style={{ flex: 1, padding: 10, borderRadius: 8, backgroundColor: categoriaServicoFoto === 'impressao_imagens_sulfite' ? '#10B981' : '#E5E7EB' }}
+                >
+                  <Text style={{ textAlign: 'center', fontSize: 12, fontWeight: 'bold', color: categoriaServicoFoto === 'impressao_imagens_sulfite' ? '#fff' : Colors.text.secondary }}>Imagem na sulfite</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
+          {tipoSelecionado === 'fotos' && categoriaServicoFoto === 'impressao_imagens_sulfite' && (
+            <View style={{ backgroundColor: '#fff', padding: 14, borderRadius: 12, marginBottom: 12, elevation: 2 }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 2 }}>Layout (todas as imagens):</Text>
+              <Text style={{ fontSize: 12, color: '#6B7280', marginBottom: 10 }}>
+                {arquivos.filter(a => a.tipo === 'imagem').length} foto(s) → {Math.max(1, Math.ceil(arquivos.filter(a => a.tipo === 'imagem').length / layoutGlobalSulfite))} folha(s) A4
+              </Text>
+              <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                {([1, 2, 4] as LayoutImagemFolha[]).map(l => (
+                  <TouchableOpacity key={l} onPress={() => setLayoutGlobalSulfite(l)}
+                    style={{ flex: 1, padding: 10, borderRadius: 8, backgroundColor: layoutGlobalSulfite === l ? '#10B981' : '#E5E7EB', marginRight: l < 4 ? 8 : 0, alignItems: 'center' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 13, color: layoutGlobalSulfite === l ? '#fff' : '#6B7280' }}>{l}/folha</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              {/* Ilustração visual do layout selecionado */}
+              <View style={{ alignItems: 'center', marginBottom: 4 }}>
+                <Text style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 6 }}>Prévia do layout na folha A4:</Text>
+                <View style={{ width: 80, height: 110, backgroundColor: '#F3F4F6', borderRadius: 4, borderWidth: 1, borderColor: '#D1D5DB', padding: 5,
+                  flexDirection: layoutGlobalSulfite === 1 ? 'column' : 'row', flexWrap: layoutGlobalSulfite === 4 ? 'wrap' : 'nowrap',
+                  justifyContent: 'space-evenly', alignItems: 'center', alignContent: 'space-evenly' }}>
+                  {Array.from({ length: layoutGlobalSulfite }).map((_, i) => (
+                    <View key={i} style={{
+                      backgroundColor: '#10B981',
+                      borderRadius: 2,
+                      opacity: 0.75,
+                      width: layoutGlobalSulfite === 1 ? 58 : layoutGlobalSulfite === 2 ? 28 : 26,
+                      height: layoutGlobalSulfite === 1 ? 85 : layoutGlobalSulfite === 2 ? 82 : 38,
+                      margin: layoutGlobalSulfite === 4 ? 1 : 0,
+                    }} />
+                  ))}
+                </View>
+                <Text style={{ fontSize: 12, color: '#10B981', fontWeight: 'bold', marginTop: 6 }}>
+                  {Math.max(1, Math.ceil(arquivos.filter(a => a.tipo === 'imagem').length / layoutGlobalSulfite))} impressão(ões) cobradas
+                </Text>
+              </View>
+            </View>
+          )}
           {/* Lista de Arquivos */}
           {arquivos.map((arquivo, index) => {
             const config = configs[arquivo.id];
@@ -705,9 +863,9 @@ export default function ImpressaoRapida() {
                     <Ionicons name="hourglass" size={32} color="#F59E0B" />
                   ) : (
                     <Ionicons 
-                      name={arquivo.tipo === 'pdf' ? 'document-text' : arquivo.tipo === 'word' || arquivo.tipo === 'powerpoint' ? 'document' : 'image'} 
+                      name={arquivo.tipo === 'pdf' ? 'document-text' : arquivo.tipo === 'word' ? 'document' : arquivo.tipo === 'powerpoint' ? 'easel' : 'image'} 
                       size={32} 
-                      color="#10B981" 
+                      color={arquivo.tipo === 'pdf' ? '#EF4444' : arquivo.tipo === 'word' ? '#3B82F6' : arquivo.tipo === 'powerpoint' ? '#F59E0B' : '#10B981'} 
                     />
                   )}
                   <View style={{ flex: 1, marginLeft: 12 }}>
@@ -725,7 +883,7 @@ export default function ImpressaoRapida() {
                 </View>
 
                 {/* Configurações para Documentos */}
-                {tipoSelecionado === 'documentos' && (
+                {arquivo.tipo !== 'imagem' && (
                   <View style={{ borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 12 }}>
                     <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8 }}>Configurações:</Text>
                     
@@ -773,7 +931,6 @@ export default function ImpressaoRapida() {
                           value={config.pageRange}
                           onChangeText={(text) => {
                             setConfigs({ ...configs, [arquivo.id]: { ...config, pageRange: text } });
-                            // Atualizar pagesToPrint em tempo real
                             const newPagesToPrint = text ? parsePagesToPrint(text, arquivo.pageCount) : arquivo.pageCount;
                             setArquivos(prev => prev.map(a => 
                               a.id === arquivo.id ? { ...a, pagesToPrint: newPagesToPrint } : a
@@ -784,9 +941,22 @@ export default function ImpressaoRapida() {
                           editable={!arquivo.loading}
                         />
                         {config.pageRange && (
-                          <Text style={{ fontSize: 12, color: '#10B981', marginBottom: 8 }}>
+                          <Text style={{ fontSize: 12, color: '#10B981', marginBottom: 4 }}>
                             ✓ {paginasImprimir} página(s) selecionada(s)
                           </Text>
+                        )}
+                        {!arquivo.loading && (
+                          <SeletorPaginasVisual
+                            totalPaginas={arquivo.pageCount}
+                            paginasSelecionadas={parseRangeStringToArray(config.pageRange || '', arquivo.pageCount)}
+                            onChange={(paginas, rangeStr) => {
+                              setConfigs({ ...configs, [arquivo.id]: { ...config, pageRange: rangeStr } });
+                              const newPagesToPrint = rangeStr ? parsePagesToPrint(rangeStr, arquivo.pageCount) : arquivo.pageCount;
+                              setArquivos(prev => prev.map(a =>
+                                a.id === arquivo.id ? { ...a, pagesToPrint: newPagesToPrint } : a
+                              ));
+                            }}
+                          />
                         )}
                       </>
                     )}
@@ -814,22 +984,30 @@ export default function ImpressaoRapida() {
                 )}
 
                 {/* Configurações para Fotos */}
-                {tipoSelecionado === 'fotos' && (
+                {arquivo.tipo === 'imagem' && (
                   <View style={{ borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 12 }}>
-                    <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8 }}>Tamanho:</Text>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
-                      {(['10x15', '13x18', '15x21', '21x29'] as TamanhoFoto[]).map(tamanho => (
-                        <TouchableOpacity
-                          key={tamanho}
-                          onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, tamanhoFoto: tamanho } })}
-                          style={{ padding: 10, borderRadius: 8, backgroundColor: config.tamanhoFoto === tamanho ? '#10B981' : '#E5E7EB', marginRight: 8, marginBottom: 8 }}
-                        >
-                          <Text style={{ fontWeight: 'bold', color: config.tamanhoFoto === tamanho ? '#fff' : Colors.text.secondary }}>
-                            {tamanho}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
-                    </View>
+                    {categoriaServicoFoto === 'revelacao_fotos' ? (
+                      <>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8 }}>Tamanho:</Text>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
+                          {(['10x15', '13x18', '15x21', '21x29'] as TamanhoFoto[]).map(tamanho => (
+                            <TouchableOpacity
+                              key={tamanho}
+                              onPress={() => setConfigs({ ...configs, [arquivo.id]: { ...config, tamanhoFoto: tamanho } })}
+                              style={{ padding: 10, borderRadius: 8, backgroundColor: config.tamanhoFoto === tamanho ? '#10B981' : '#E5E7EB', marginRight: 8, marginBottom: 8 }}
+                            >
+                              <Text style={{ fontWeight: 'bold', color: config.tamanhoFoto === tamanho ? '#fff' : Colors.text.secondary }}>
+                                {tamanho}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      </>
+                    ) : (
+                      <Text style={{ fontSize: 12, color: '#6B7280', marginBottom: 8 }}>
+                        Layout global: {layoutGlobalSulfite} imagem(ns)/folha
+                      </Text>
+                    )}
 
                     <Text style={{ fontSize: 14, marginBottom: 4 }}>Cópias:</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -880,7 +1058,7 @@ export default function ImpressaoRapida() {
               </Text>
             </View>
             <View style={{ borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 12, marginTop: 12 }}>
-              {resumoDesconto && (
+              {resumoDesconto && resumoDesconto.aplicaDesconto && (
                 <View style={{
                   backgroundColor: '#ECFDF5',
                   padding: 12,
@@ -914,6 +1092,27 @@ export default function ImpressaoRapida() {
                       Economia no pedido: R$ {resumoDesconto.economia.toFixed(2).replace('.', ',')}
                     </Text>
                   )}
+                </View>
+              )}
+
+              {resumoDesconto && !resumoDesconto.aplicaDesconto && resumoDesconto.descontoAtivo && resumoDesconto.minPaginasDesconto !== null && (
+                <View style={{
+                  backgroundColor: '#EFF6FF',
+                  padding: 12,
+                  borderRadius: 10,
+                  marginBottom: 12,
+                  borderLeftWidth: 4,
+                  borderLeftColor: '#3B82F6',
+                }}>
+                  <Text style={{ fontSize: 13, color: '#1E40AF', fontWeight: '700', marginBottom: 6 }}>
+                    💡 Dica de economia
+                  </Text>
+                  <Text style={{ fontSize: 12, color: '#1E3A8A', lineHeight: 18 }}>
+                    A partir de {resumoDesconto.minPaginasDesconto} páginas impressas, você recebe desconto por volume.
+                    {resumoDesconto.paginasFaltantes > 0
+                      ? ` Faltam ${resumoDesconto.paginasFaltantes} página(s) para liberar esse desconto.`
+                      : ' Nesta quantidade o desconto pode variar conforme o tipo de impressão.'}
+                  </Text>
                 </View>
               )}
 

@@ -2,6 +2,7 @@
 // Método por tamanho de arquivo - SIMPLES, CONFIÁVEL, FUNCIONA
 import * as FileSystem from 'expo-file-system';
 import { PDFDocument } from 'pdf-lib';
+import { estimateDocxPagesFromContent, getDocxPagesFromAppXml, getPptxSlidesFromAppXml } from './openXmlUtils';
 
 function isWhitespaceByte(byte: number): boolean {
   return byte === 9 || byte === 10 || byte === 13 || byte === 32;
@@ -117,6 +118,18 @@ export async function contarPaginasWord(uri: string): Promise<number> {
   console.log('📝 [WORD] Iniciando contagem de páginas:', uri);
   
   try {
+    const pagesFromAppXml = await getDocxPagesFromAppXml(uri);
+    if (pagesFromAppXml && pagesFromAppXml > 0) {
+      console.log(`✅ [WORD] OpenXML docProps/app.xml: ${pagesFromAppXml} páginas`);
+      return pagesFromAppXml;
+    }
+
+    const pagesFromContent = await estimateDocxPagesFromContent(uri);
+    if (pagesFromContent && pagesFromContent > 0) {
+      console.log(`✅ [WORD] Estimativa por conteúdo DOCX: ${pagesFromContent} páginas`);
+      return pagesFromContent;
+    }
+
     const fileInfo = await FileSystem.getInfoAsync(uri);
     
     if (!fileInfo.exists) {
@@ -129,9 +142,8 @@ export async function contarPaginasWord(uri: string): Promise<number> {
     
     console.log(`� [WORD] Tamanho do arquivo: ${tamanhoBytes} bytes (${tamanhoKB}KB)`);
     
-    // CALIBRAÇÃO: 1.841KB = 15 páginas
-    // 1,884,160 bytes / 15 = 125,610 bytes por página
-    const BYTES_POR_PAGINA = 125610;
+    // Heurística mais conservadora para reduzir falso 1 página em DOCX com pouco texto.
+    const BYTES_POR_PAGINA = 48000;
     const paginasEstimadas = Math.max(1, Math.round(tamanhoBytes / BYTES_POR_PAGINA));
     
     console.log(`✅ [WORD] Páginas estimadas: ${paginasEstimadas}`);
@@ -154,6 +166,12 @@ export async function contarPaginasPowerPoint(uri: string): Promise<number> {
   console.log('📊 [PPT] Iniciando contagem de slides:', uri);
   
   try {
+    const slidesFromAppXml = await getPptxSlidesFromAppXml(uri);
+    if (slidesFromAppXml && slidesFromAppXml > 0) {
+      console.log(`✅ [PPT] OpenXML docProps/app.xml: ${slidesFromAppXml} slides`);
+      return slidesFromAppXml;
+    }
+
     const fileInfo = await FileSystem.getInfoAsync(uri);
     
     if (!fileInfo.exists) {

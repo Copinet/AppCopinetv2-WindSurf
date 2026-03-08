@@ -177,7 +177,7 @@ async function countWordPages(uint8Array: Uint8Array, fileSize: number): Promise
         }
       }
 
-      if (pagesFromMetadata > 1) {
+      if (pagesFromMetadata > 0) {
         console.log(`✅ [WORD] DOCX por app.xml: ${pagesFromMetadata} páginas`)
         return pagesFromMetadata
       }
@@ -191,20 +191,38 @@ async function countWordPages(uint8Array: Uint8Array, fileSize: number): Promise
       const manualPageBreaks = (documentXml.match(/<w:br\b[^>]*w:type=["']page["'][^>]*>/g) || []).length
       const pageByBreaks = Math.max(1, renderedBreaks + manualPageBreaks + 1)
 
+      const sections = (documentXml.match(/<w:sectPr\b/g) || []).length
+      const pageBySections = Math.max(1, sections)
+
+      const paragraphs = (documentXml.match(/<w:p\b/g) || []).length
+      const pageByParagraphs = paragraphs > 0 ? Math.max(1, Math.round(paragraphs / 12)) : 1
+
       const textoSemTags = documentXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
       const wordsFromContent = textoSemTags ? textoSemTags.split(' ').length : 0
       const baseWords = Math.max(wordsFromMetadata, wordsFromContent)
       const pageByWords = baseWords > 0 ? Math.max(1, Math.round(baseWords / 250)) : 1
 
-      const pageCount = Math.max(pagesFromMetadata, pageByBreaks, pageByWords)
+      const pageBySize = Math.max(1, Math.round(fileSize / 48000))
 
-      console.log(`✅ [WORD] DOCX por XML: ${pageCount} páginas (breaks=${pageByBreaks}, words=${baseWords})`)
+      const pageCount = Math.max(
+        pagesFromMetadata,
+        pageByBreaks,
+        pageBySections,
+        pageByParagraphs,
+        pageByWords,
+        pageBySize,
+      )
+
+      console.log(
+        `✅ [WORD] DOCX por XML: ${pageCount} páginas (breaks=${pageByBreaks}, sections=${pageBySections}, paragraphs=${paragraphs}, words=${baseWords}, size=${fileSize})`,
+      )
       return pageCount
     }
 
     if (pagesFromMetadata > 0) {
       const pageByWords = wordsFromMetadata > 0 ? Math.max(1, Math.round(wordsFromMetadata / 250)) : 1
-      const pageCount = Math.max(pagesFromMetadata, pageByWords)
+      const pageBySize = Math.max(1, Math.round(fileSize / 48000))
+      const pageCount = Math.max(pagesFromMetadata, pageByWords, pageBySize)
       console.log(`✅ [WORD] DOCX por metadados: ${pageCount} páginas`)
       return pageCount
     }

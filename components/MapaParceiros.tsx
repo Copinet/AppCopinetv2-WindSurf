@@ -193,16 +193,23 @@ export function MapaParceiros({
   }
 
   function getDistanciaParceiro(parceiro: Parceiro): number {
-    if (Number.isFinite(parceiro.distancia_metros) && parceiro.distancia_metros > 0) {
-      return parceiro.distancia_metros;
-    }
+    const distanciaEmLinhaReta =
+      Number.isFinite(parceiro.distancia_metros) && parceiro.distancia_metros > 0
+        ? parceiro.distancia_metros
+        : calcularDistanciaLocalMetros(parceiro);
 
-    return calcularDistanciaLocalMetros(parceiro);
+    // Ajuste para aproximar da rota real de ruas (normalmente maior que linha reta).
+    const distanciaKm = distanciaEmLinhaReta / 1000;
+    const fatorRotaUrbana = distanciaKm > 5 ? 1.45 : distanciaKm > 2 ? 1.35 : 1.2;
+
+    return Math.round(distanciaEmLinhaReta * fatorRotaUrbana);
   }
 
   function calcularTempoEstimado(parceiro: Parceiro): string {
     const distanciaMetros = getDistanciaParceiro(parceiro);
-    const velocidadeMediaKmH = 40;
+    const distanciaKm = distanciaMetros / 1000;
+    // Regra solicitada: acima de 5km considerar deslocamento de carro.
+    const velocidadeMediaKmH = distanciaKm > 5 ? 35 : 22;
     const minutosDeslocamento = Math.max(3, Math.round((distanciaMetros / 1000 / velocidadeMediaKmH) * 60));
     const tempoFila = parceiro.tempo_estimado_fila || 0;
     const total = minutosDeslocamento + tempoFila;
